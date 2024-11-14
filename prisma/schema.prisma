@@ -7,62 +7,64 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
-}
-
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
 }
 
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
-    userId                   String
     type                     String
     provider                 String
-    providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
+    providerAccountId        String  @map("provider_account_id")
+    refresh_token            String?
+    access_token             String?
     expires_at               Int?
     token_type               String?
     scope                    String?
-    id_token                 String? // @db.Text
+    id_token                 String?
     session_state            String?
-    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     refresh_token_expires_in Int?
 
+    userId String @map("user_id")
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
     @@unique([provider, providerAccountId])
+    @@map("accounts")
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id String @id @default(cuid())
+
+    expires   DateTime
+    createdAt DateTime @default(now()) @map("created_at")
+
+    sessionToken String @unique @map("session_token")
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
+    id String @id @default(cuid())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
     email         String?   @unique
-    emailVerified DateTime?
+    firstName     String?   @map("first_name")
+    lastName      String?   @map("last_name")
+    emailVerified DateTime? @map("email_verified")
     image         String?
-    accounts      Account[]
-    sessions      Session[]
-    posts         Post[]
+
+    accounts Account[]
+    sessions Session[]
+
+    @@index([createdAt])
+    @@index([deletedAt])
+    @@map("users")
 }
 
 model VerificationToken {
@@ -71,4 +73,5 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+    @@map("verification_tokens")
 }

@@ -12,7 +12,7 @@ datasource db {
 
 // Necessary for Next auth
 model Account {
-    id                       String  @id @default(cuid())
+    id                       Int     @id @default(autoincrement())
     type                     String
     provider                 String
     providerAccountId        String  @map("provider_account_id")
@@ -25,46 +25,11 @@ model Account {
     session_state            String?
     refresh_token_expires_in Int?
 
-    userId String @map("user_id")
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId Int  @map("user_id")
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
     @@map("accounts")
-}
-
-model Session {
-    id String @id @default(cuid())
-
-    expires   DateTime
-    createdAt DateTime @default(now()) @map("created_at")
-
-    sessionToken String @unique @map("session_token")
-
-    userId String
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@map("sessions")
-}
-
-model User {
-    id String @id @default(cuid())
-
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
-
-    email         String?   @unique
-    firstName     String?   @map("first_name")
-    lastName      String?   @map("last_name")
-    emailVerified DateTime? @map("email_verified")
-    image         String?
-
-    accounts Account[]
-    sessions Session[]
-
-    @@index([createdAt])
-    @@index([deletedAt])
-    @@map("users")
 }
 
 model VerificationToken {
@@ -74,4 +39,320 @@ model VerificationToken {
 
     @@unique([identifier, token])
     @@map("verification_tokens")
+}
+
+model Session {
+    id Int @id @default(autoincrement())
+
+    expires   DateTime
+    createdAt DateTime @default(now()) @map("created_at")
+
+    sessionToken String @unique @map("session_token")
+
+    userId Int  @map("user_id")
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([expires])
+    @@index([createdAt])
+    @@map("sessions")
+}
+
+model User {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    email         String?   @unique
+    firstName     String    @map("first_name")
+    lastName      String    @map("last_name")
+    emailVerified DateTime? @map("email_verified")
+    image         String?
+
+    accounts          Account[]
+    sessions          Session[]
+    userRoles         UserRole[]
+    organizationUsers OrganizationUser[]
+
+    @@index([createdAt])
+    @@index([deletedAt])
+    @@map("users")
+}
+
+model UserRole {
+    userId Int  @map("user_id")
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    roleId Int  @map("role_id")
+    role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+    @@id([userId, roleId])
+    @@index(roleId)
+    @@map("users_roles")
+}
+
+model Role {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String  @unique
+    description String?
+
+    rolePermissions RolePermission[]
+    userRoles       UserRole[]
+
+    @@index([createdAt])
+    @@map("roles")
+}
+
+model RolePermission {
+    roleId       Int @map("role_id")
+    permissionId Int @map("permission_id")
+
+    permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+    role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+    @@id([roleId, permissionId])
+    @@index(roleId)
+    @@index(permissionId)
+    @@map("roles_permissions")
+}
+
+model Permission {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String  @unique
+    description String?
+
+    rolePermissions RolePermission[]
+
+    @@index([createdAt])
+    @@map("permissions")
+}
+
+model OrganizationUser {
+    userId         Int @map("user_id")
+    organizationId Int @map("organization_id")
+
+    user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@id([organizationId, userId])
+    @@index(userId)
+    @@map("organizations_users")
+}
+
+model Organization {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name String @unique
+
+    organizationUsers     OrganizationUser[]
+    organizationTemplates OrganizationTemplate[]
+    createdTemplates      Template[]
+
+    @@index([createdAt])
+    @@map("organizations")
+}
+
+model OrganizationTemplate {
+    organizationId Int @map("organization_id")
+    templateId     Int @map("template_id")
+
+    organization Organization @relation(fields: [organizationId], references: [id])
+    template     Template     @relation(fields: [templateId], references: [id])
+    templateName String       @map("template_name") // 
+    domains      Domain[]
+
+    @@id([organizationId, templateId])
+    @@unique([organizationId, templateName])
+    @@index(templateId)
+    @@map("organizations_templates")
+}
+
+model Template {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String
+    isPublic    Boolean @map("is_public")
+    description String?
+    type        String
+
+    createdByOrganizationId Int          @map("created_by_organization_id")
+    createdByOrganization   Organization @relation(fields: [createdByOrganizationId], references: [id])
+
+    organizationTemplates OrganizationTemplate[]
+    tags                  TemplateTag[]
+    versions              Version[]
+
+    @@index([isPublic])
+    @@map("templates")
+}
+
+model Version {
+    id BigInt @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    version     String @unique
+    description String
+
+    templateId Int      @map("template_id")
+    template   Template @relation(fields: [templateId], references: [id])
+    pages      Page[]
+
+    @@index([createdAt])
+    @@index([deletedAt])
+    @@map("versions")
+}
+
+model TemplateTag {
+    templateId Int @map("template_id")
+    tagId      Int @map("tag_id")
+
+    template Template @relation(fields: [templateId], references: [id])
+    tag      Tag      @relation(fields: [tagId], references: [id])
+
+    @@id([templateId, tagId])
+    @@index([tagId])
+    @@map("template_tags")
+}
+
+model Tag {
+    id        Int      @id @default(autoincrement())
+    name      String   @unique
+    createdAt DateTime @default(now()) @map("created_at")
+
+    templateTags TemplateTag[]
+
+    @@index([createdAt])
+    @@map("tags")
+}
+
+model Domain {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    domain      String
+    displayName String @map("display_name")
+    httpStatus  Int?   @map("http_status")
+
+    organizationId       Int                  @map("organization_id")
+    templateId           Int                  @map("template_id")
+    organizationTemplate OrganizationTemplate @relation(fields: [organizationId, templateId], references: [organizationId, templateId])
+
+    @@unique([organizationId, domain])
+    @@unique([organizationId, templateId])
+    @@index([domain])
+    @@index([createdAt])
+    @@index([deletedAt])
+    @@map("domains")
+}
+
+model Page {
+    id BigInt @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    pageName String @map("page_name")
+    pagePath String @map("page_path")
+    pageType String @map("page_type")
+
+    versionId  BigInt      @map("version_id")
+    version    Version     @relation(fields: [versionId], references: [id])
+    components Component[]
+
+    @@index([createdAt])
+    @@map("pages")
+}
+
+model Component {
+    id BigInt @id @default(autoincrement())
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+    type               ComponentTypeEnum
+    className          String?           @map("class_name") // tailwind classes as a string
+    color              String?
+    disabled           String? // can write any script that returns a boolean.  {{true}} or {{false}} or {{currentInput.value === 'someValue'}}, etc.
+    html               String?
+    htmlId             String?           @map("html_id")
+    icon               String?
+    leftSection        String?           @map("left_section")
+    loading            String? // can write any script that returns a boolean.  {{true}} or {{false}} or {{currentInput.value === 'someValue'}}, etc.
+    onRenderScript     String?           @map("on_render_script") // write any script with mustache syntax
+    radius             MantineSizeEnum?
+    rightSection       String?           @map("right_section")
+    size               MantineSizeEnum?
+    shouldRenderScript String?           @map("should_render_script")
+
+    buttonActionScript String?                   @map("button_action_script") // write any script with mustache syntax
+    buttonFullWidth    Boolean?                  @map("button_full_width")
+    buttonText         String?                   @map("button_text")
+    buttonVariant      MantineButtonVariantEnum? @map("button_variant")
+
+    imageAlt    String? @map("image_alt")
+    imageHeight Int?    @map("image_height")
+    imageWidth  Int?    @map("image_width")
+    imageSrc    String? @map("image_src")
+
+    pageId            BigInt      @map("page_id")
+    page              Page        @relation(fields: [pageId], references: [id])
+    parentComponentId BigInt?     @map("parent_component_id")
+    parentComponent   Component?  @relation(name: "ComponentToComponent", fields: [parentComponentId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+    components        Component[] @relation(name: "ComponentToComponent")
+
+    @@index([createdAt])
+    @@index([type])
+    @@map("components")
+}
+
+enum ComponentTypeEnum {
+    button
+    div
+    icon
+    image
+    html
+    custom
+}
+
+enum MantineSizeEnum {
+    xs
+    sm
+    md
+    lg
+    xl
+}
+
+enum MantineButtonVariantEnum {
+    default
+    filled
+    light
+    outline
+    subtle
+    transparent
+    white
 }

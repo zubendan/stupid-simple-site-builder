@@ -11,12 +11,13 @@
 
     /* Strictness */
     "strict": true,
+    "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 
     /* Bundled projects */
     "lib": ["dom", "dom.iterable", "ES2022"],
-    "noEmit": true,
+    "noEmit": false,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",
@@ -38,5 +39,11 @@
     "**/*.js",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "coverage",
+    "**/*.js",
+    "src/types/generated/*"
+  ]
 }

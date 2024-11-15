@@ -96,8 +96,17 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   const result = await next();
 
   const end = Date.now();
+  function highlightMessage(message: string, color = '32') {
+    const msColored = `\x1b[${color}m${message}\x1b[0m`; // ANSI code for green color
+    return msColored;
+  }
+  const executionTime = end - start;
+  const executionColor =
+    executionTime > 999 ? '31' : executionTime > 499 ? '33' : '32'; // red, yellow, green
   // biome-ignore lint/suspicious/noConsole: <explanation>
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  console.log(
+    `${highlightMessage('[TRPC]', '36')} ${highlightMessage(path, '34')} took ${highlightMessage(`${executionTime}ms`, executionColor)} to execute`,
+  );
 
   return result;
 });

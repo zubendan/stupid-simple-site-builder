@@ -336,6 +336,7 @@ enum ComponentTypeEnum {
     icon
     image
     html
+    link
     custom
 }
 

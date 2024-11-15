@@ -156,11 +156,13 @@ model Organization {
     updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt DateTime? @map("deleted_at")
 
-    name String @unique
+    name  String  @unique
+    image String?
 
     organizationUsers     OrganizationUser[]
     organizationTemplates OrganizationTemplate[]
     createdTemplates      Template[]
+    customComponents      CustomComponent[]
 
     @@index([createdAt])
     @@map("organizations")
@@ -319,15 +321,72 @@ model Component {
     imageWidth  Int?    @map("image_width")
     imageSrc    String? @map("image_src")
 
-    pageId            BigInt      @map("page_id")
-    page              Page        @relation(fields: [pageId], references: [id])
-    parentComponentId BigInt?     @map("parent_component_id")
-    parentComponent   Component?  @relation(name: "ComponentToComponent", fields: [parentComponentId], references: [id], onDelete: SetNull, onUpdate: NoAction)
-    components        Component[] @relation(name: "ComponentToComponent")
+    pageId                  BigInt                    @map("page_id")
+    page                    Page                      @relation(fields: [pageId], references: [id])
+    parentComponentId       BigInt?                   @map("parent_component_id")
+    parentComponent         Component?                @relation(name: "ComponentToComponent", fields: [parentComponentId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+    components              Component[]               @relation(name: "ComponentToComponent")
+    customComponentInstance CustomComponentInstance[]
 
     @@index([createdAt])
     @@index([type])
     @@map("components")
+}
+
+model CustomComponentInstance {
+    customComponentId BigInt @map("custom_component_id")
+    componentId       BigInt @unique @map("component_id")
+
+    component       Component             @relation(fields: [componentId], references: [id])
+    customComponent CustomComponent       @relation(fields: [customComponentId], references: [id])
+    props           CustomComponentProp[]
+
+    @@id([customComponentId, componentId])
+}
+
+model CustomComponent {
+    id BigInt @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String
+    description String?
+    type        String
+    jsx         String
+
+    organizationId Int          @map("organization_id")
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    instances CustomComponentInstance[]
+
+    @@index([createdAt])
+    @@map("custom_components")
+}
+
+model CustomComponentProp {
+    key   String
+    type  String
+    value String
+
+    customComponentId        BigInt                  @map("custom_component_id")
+    componentId              BigInt                  @map("component_id")
+    customComponentInstances CustomComponentInstance @relation(fields: [customComponentId, componentId], references: [customComponentId, componentId])
+
+    @@id([customComponentId, componentId, key])
+    @@map("custom_component_props")
+}
+
+enum CustomComponentPropTypeEnum {
+    string
+    number
+    boolean
+    object
+    array
+    function
+    component
+    any
 }
 
 enum ComponentTypeEnum {

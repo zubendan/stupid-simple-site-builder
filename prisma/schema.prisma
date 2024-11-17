@@ -360,7 +360,7 @@ model CustomComponent {
 
 model CustomComponentProp {
     key  String
-    type String
+    type CustomComponentPropTypeEnum
 
     customComponentId BigInt          @map("custom_component_id")
     customComponent   CustomComponent @relation(fields: [customComponentId], references: [id])

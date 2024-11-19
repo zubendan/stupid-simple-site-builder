@@ -6,3 +6,5 @@ export enum RoleType {
   ORGANIZATION_USER = 'organization_user',
   USER = 'user',
 }
+
+export const allRoles: RoleType[] = Object.values(RoleType);

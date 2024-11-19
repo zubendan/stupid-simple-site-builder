@@ -1,20 +1,17 @@
 import { Prisma, PrismaClient, User } from '@prisma/client';
 import { RoleType } from '~/types/role';
+import { containsSearchTerms } from '~/utils/prisma';
 
-const userService = {
+export const userService = {
   listSearchWhere(
     searchTerms: string[],
     roles: RoleType[],
     deleted: boolean,
-    adAccountId: string | null,
   ): Prisma.UserWhereInput {
-    const containsSearchTerms: Prisma.UserWhereInput[] = [];
-
-    for (const searchTerm of searchTerms) {
-      containsSearchTerms.push({ email: { contains: searchTerm } });
-      containsSearchTerms.push({ firstName: { contains: searchTerm } });
-      containsSearchTerms.push({ lastName: { contains: searchTerm } });
-    }
+    const containedSearchTerms = containsSearchTerms<Prisma.UserWhereInput>(
+      searchTerms,
+      ['email', 'firstName', 'lastName'],
+    );
 
     return {
       AND: [
@@ -30,7 +27,7 @@ const userService = {
           },
         },
         ...(deleted ? [{ NOT: { deletedAt: null } }] : [{ deletedAt: null }]),
-        ...(searchTerms.length ? [{ OR: containsSearchTerms }] : []),
+        ...(searchTerms.length ? [{ OR: containedSearchTerms }] : []),
       ],
     };
   },
@@ -39,14 +36,8 @@ const userService = {
     searchTerms: string[],
     roles: RoleType[],
     deleted: boolean,
-    adAccountId: string | null,
   ): Promise<number> {
-    const where = userService.listSearchWhere(
-      searchTerms,
-      roles,
-      deleted,
-      adAccountId,
-    );
+    const where = userService.listSearchWhere(searchTerms, roles, deleted);
 
     return await db.user.count({ where });
   },

@@ -2,6 +2,8 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { userService } from '../service/users';
+import { allRoles, RoleType } from '~/types/role';
 
 export const userRouter = createTRPCRouter({
   list: protectedProcedure
@@ -9,46 +11,26 @@ export const userRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         perPage: z.number(),
-        search: z.string().optional(),
-        roleIds: z.array(z.number()).optional(),
-        permissionIds: z.array(z.number()).optional(),
+        search: z.string(),
+        roles: z.array(z.nativeEnum(RoleType)).optional().default(allRoles),
+        deleted: z.boolean().optional().default(false),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const whereClause: Prisma.UserWhereInput = {
-        ...(input.search && {
-          OR: [
-            {
-              firstName: { contains: input.search, mode: 'insensitive' },
-            },
-            {
-              lastName: { contains: input.search, mode: 'insensitive' },
-            },
-            {
-              email: { contains: input.search, mode: 'insensitive' },
-            },
-          ],
-        }),
-
-        ...(input.roleIds && {
-          roles: {
-            some: {
-              id: {
-                in: input.roleIds,
-              },
-            },
-          },
-        }),
-        ...(input.permissionIds && {
-          permissions: {
-            some: {
-              id: {
-                in: input.permissionIds,
-              },
-            },
-          },
-        }),
-      };
+      const searchTerms = input.search.trim().length
+        ? input.search.trim().split(/\s+/)
+        : [];
+      const whereClause: Prisma.UserWhereInput = userService.listSearchWhere(
+        searchTerms,
+        input.roles,
+        input.deleted,
+      );
+      const totalCount = await userService.listSearchTotal(
+        ctx.db,
+        searchTerms,
+        input.roles,
+        input.deleted,
+      );
       const users = await ctx.db.user.findMany({
         where: whereClause,
         include: {
@@ -62,9 +44,7 @@ export const userRouter = createTRPCRouter({
         take: input.perPage,
         skip: (input.page - 1) * input.perPage,
       });
-      const totalCount = await ctx.db.user.count({
-        where: whereClause,
-      });
+
       return {
         users,
         pageCount: Math.ceil(totalCount / input.perPage),

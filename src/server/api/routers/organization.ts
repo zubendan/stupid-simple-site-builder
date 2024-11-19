@@ -2,17 +2,18 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
-import { userService } from '../service/user';
+import { organizationService } from '../service/organization';
 import { allRoles, RoleType } from '~/types/role';
+import { hashidService } from '../service/hashid';
 
-export const userRouter = createTRPCRouter({
+export const organizationRouter = createTRPCRouter({
   list: protectedProcedure
     .input(
       z.object({
         page: z.number(),
         perPage: z.number(),
         search: z.string(),
-        roles: z.array(z.nativeEnum(RoleType)).optional().default(allRoles),
+        userHashid: z.string().optional(),
         deleted: z.boolean().optional().default(false),
       }),
     )
@@ -20,33 +21,25 @@ export const userRouter = createTRPCRouter({
       const searchTerms = input.search.trim().length
         ? input.search.trim().split(/\s+/)
         : [];
-      const whereClause: Prisma.UserWhereInput = userService.listSearchWhere(
-        searchTerms,
-        input.roles,
-        input.deleted,
-      );
-      const totalCount = await userService.listSearchTotal(
+      const userId = input.userHashid
+        ? hashidService.decode(input.userHashid)
+        : null;
+      const whereClause: Prisma.OrganizationWhereInput =
+        organizationService.listSearchWhere(searchTerms, userId, input.deleted);
+      const totalCount = await organizationService.listSearchTotal(
         ctx.db,
         searchTerms,
-        input.roles,
+        userId,
         input.deleted,
       );
-      const users = await ctx.db.user.findMany({
+      const organizations = await ctx.db.organization.findMany({
         where: whereClause,
-        include: {
-          userRoles: {
-            include: {
-              role: true,
-            },
-          },
-          accounts: true,
-        },
         take: input.perPage,
         skip: (input.page - 1) * input.perPage,
       });
 
       return {
-        users,
+        organizations,
         pageCount: Math.ceil(totalCount / input.perPage),
       };
     }),
@@ -54,12 +47,12 @@ export const userRouter = createTRPCRouter({
   find: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      return ctx.db.user.findUnique({
+      return ctx.db.organization.findUnique({
         where: { id: input.id },
         include: {
-          userRoles: {
+          organizationUsers: {
             include: {
-              role: true,
+              user: true,
             },
           },
         },

@@ -2,9 +2,8 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
-import { organizationService } from '../service/organization';
-import { allRoles, RoleType } from '~/types/role';
 import { hashidService } from '../service/hashid';
+import { organizationService } from '../service/organization';
 
 export const organizationRouter = createTRPCRouter({
   list: protectedProcedure

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Organization } from '@prisma/client';
+import { Organization, Prisma, PrismaClient } from '@prisma/client';
 import { RoleType } from '~/types/role';
 import { containsSearchTerms } from '~/utils/prisma';
 

@@ -27,17 +27,16 @@ export const organizationRouter = createTRPCRouter({
         ? ctx.hashidService.decode(input.userHashid)
         : null;
       const whereClause: Prisma.OrganizationWhereInput =
-        ctx.organizationService.listSearchWhere(
+        ctx.organizationService.listSearchWhere({
           searchTerms,
           userId,
-          input.deleted,
-        );
-      const totalCount = await ctx.organizationService.listSearchTotal(
-        ctx.db,
+          deleted: input.deleted,
+        });
+      const totalCount = await ctx.organizationService.listSearchTotal({
         searchTerms,
         userId,
-        input.deleted,
-      );
+        deleted: input.deleted,
+      });
       const organizations = await ctx.db.organization.findMany({
         where: whereClause,
         take: input.perPage,

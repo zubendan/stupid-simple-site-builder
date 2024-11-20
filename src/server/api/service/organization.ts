@@ -3,11 +3,15 @@ import { containsSearchTerms } from '~/utils/prisma';
 
 export class OrganizationService {
   constructor(private db: PrismaClient) {}
-  public listSearchWhere(
-    searchTerms: string[],
-    userId: number | null,
-    deleted: boolean,
-  ): Prisma.OrganizationWhereInput {
+  public listSearchWhere({
+    searchTerms,
+    userId,
+    deleted,
+  }: {
+    searchTerms: string[];
+    userId: number | null;
+    deleted: boolean;
+  }): Prisma.OrganizationWhereInput {
     const containedSearchTerms =
       containsSearchTerms<Prisma.OrganizationWhereInput>(searchTerms, ['name']);
 
@@ -30,13 +34,16 @@ export class OrganizationService {
     };
   }
 
-  public async listSearchTotal(
-    db: PrismaClient,
-    searchTerms: string[],
-    userId: number | null,
-    deleted: boolean,
-  ): Promise<number> {
-    const where = this.listSearchWhere(searchTerms, userId, deleted);
+  public async listSearchTotal({
+    searchTerms,
+    userId,
+    deleted,
+  }: {
+    searchTerms: string[];
+    userId: number | null;
+    deleted: boolean;
+  }): Promise<number> {
+    const where = this.listSearchWhere({ searchTerms, userId, deleted });
 
     return await this.db.organization.count({ where });
   }

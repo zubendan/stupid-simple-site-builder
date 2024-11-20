@@ -18,6 +18,7 @@ import { HashidService } from './service/hashid';
 import { OrganizationService } from './service/organization';
 import Sqids from 'sqids';
 import { env } from '~/env';
+import { TemplateService } from './service/template';
 
 /**
  * 1. CONTEXT
@@ -41,6 +42,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const hashidService = new HashidService(sqids);
   const userService = new UserService(db);
   const organizationService = new OrganizationService(db);
+  const templateService = new TemplateService(db);
 
   return {
     db,
@@ -48,6 +50,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     hashidService,
     userService,
     organizationService,
+    templateService,
     ...opts,
   };
 };

@@ -1,9 +1,9 @@
-import { Organization, Prisma, PrismaClient } from '@prisma/client';
-import { RoleType } from '~/types/role';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { containsSearchTerms } from '~/utils/prisma';
 
-export const organizationService = {
-  listSearchWhere(
+export class OrganizationService {
+  constructor(private db: PrismaClient) {}
+  public listSearchWhere(
     searchTerms: string[],
     userId: number | null,
     deleted: boolean,
@@ -28,19 +28,16 @@ export const organizationService = {
         ...(searchTerms.length ? [{ OR: containedSearchTerms }] : []),
       ],
     };
-  },
-  async listSearchTotal(
+  }
+
+  public async listSearchTotal(
     db: PrismaClient,
     searchTerms: string[],
     userId: number | null,
     deleted: boolean,
   ): Promise<number> {
-    const where = organizationService.listSearchWhere(
-      searchTerms,
-      userId,
-      deleted,
-    );
+    const where = this.listSearchWhere(searchTerms, userId, deleted);
 
-    return await db.organization.count({ where });
-  },
-};
+    return await this.db.organization.count({ where });
+  }
+}

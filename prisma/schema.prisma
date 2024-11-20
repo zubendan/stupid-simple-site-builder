@@ -91,6 +91,18 @@ model UserRole {
     @@map("users_roles")
 }
 
+model OrganizationUserRole {
+    userId           Int              @map("user_id")
+    organizationId   Int              @map("organization_id")
+    organizationUser OrganizationUser @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
+    roleId           Int              @map("role_id")
+    role             Role             @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+    @@id([organizationId, userId, roleId])
+    @@index(roleId)
+    @@map("organizations_users_roles")
+}
+
 model Role {
     id Int @id @default(autoincrement())
 
@@ -101,8 +113,9 @@ model Role {
     name        String  @unique
     description String?
 
-    rolePermissions RolePermission[]
-    userRoles       UserRole[]
+    rolePermissions   RolePermission[]
+    userRoles         UserRole[]
+    organizationRoles OrganizationUserRole[]
 
     @@index([createdAt])
     @@map("roles")
@@ -141,8 +154,9 @@ model OrganizationUser {
     userId         Int @map("user_id")
     organizationId Int @map("organization_id")
 
-    user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    roles        OrganizationUserRole[]
 
     @@id([organizationId, userId])
     @@index(userId)

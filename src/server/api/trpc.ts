@@ -13,6 +13,11 @@ import { ZodError } from 'zod';
 
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
+import { UserService } from './service/user';
+import { HashidService } from './service/hashid';
+import { OrganizationService } from './service/organization';
+import Sqids from 'sqids';
+import { env } from '~/env';
 
 /**
  * 1. CONTEXT
@@ -27,11 +32,22 @@ import { db } from '~/server/db';
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const sqids = new Sqids({
+    alphabet: env.SQIDS_ALPHABET,
+    minLength: 6,
+  });
+
   const session = await auth();
+  const hashidService = new HashidService(sqids);
+  const userService = new UserService(db);
+  const organizationService = new OrganizationService(db);
 
   return {
     db,
     session,
+    hashidService,
+    userService,
+    organizationService,
     ...opts,
   };
 };

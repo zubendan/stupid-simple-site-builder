@@ -118,4 +118,19 @@ export const organizationRouter = createTRPCRouter({
         where: { id },
       });
     }),
+
+  addUsers: protectedProcedure
+    .input(
+      z.object({
+        hashid: z.string(),
+        userHashids: z.array(z.string()),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.hashid);
+      const userIds = input.userHashids.map((hashid) =>
+        ctx.hashidService.decode(hashid),
+      );
+      return ctx.organizationService.addUsers(organizationId, userIds);
+    }),
 });

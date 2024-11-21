@@ -62,10 +62,11 @@ export const userRouter = createTRPCRouter({
     }),
 
   find: protectedProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ hashid: z.string() }))
     .query(async ({ ctx, input }) => {
+      const id = ctx.hashidService.decode(input.hashid);
       return ctx.db.user.findUnique({
-        where: { id: input.id },
+        where: { id },
         include: {
           userRoles: {
             include: {

@@ -119,6 +119,12 @@ export const organizationRouter = createTRPCRouter({
       });
     }),
 
+  inviteUsers: protectedProcedure
+    .input(z.object({ emails: z.array(z.string()) }))
+    .mutation(({ ctx, input }) => {
+      return input.emails; //TODO: Implement: Invite Users
+    }),
+
   addUsers: protectedProcedure
     .input(
       z.object({

@@ -153,4 +153,16 @@ export const templateRouter = createTRPCRouter({
         pageCount: Math.ceil(totalCount / input.perPage),
       };
     }),
+
+  create: protectedProcedure
+    .input(z.object({}))
+    .mutation(async ({ ctx, input }) => {
+      '';
+    }),
+
+  update: protectedProcedure
+    .input(z.object({}))
+    .mutation(async ({ ctx, input }) => {
+      '';
+    }),
 });

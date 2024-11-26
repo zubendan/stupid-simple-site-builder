@@ -163,6 +163,22 @@ model OrganizationUser {
     @@map("organizations_users")
 }
 
+model InviteToken {
+    token String @id @default(uuid())
+
+    createdAt DateTime @default(now()) @map("created_at")
+    expiresAt DateTime @map("expires_at")
+
+    email String
+
+    organizationId Int          @map("organization_id")
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@index([createdAt])
+    @@index([email])
+    @@map("invite_tokens")
+}
+
 model Organization {
     id Int @id @default(autoincrement())
 
@@ -177,6 +193,7 @@ model Organization {
     organizationTemplates OrganizationTemplate[]
     createdTemplates      Template[]
     customComponents      CustomComponent[]
+    inviteTokens          InviteToken[]
 
     @@index([createdAt])
     @@map("organizations")

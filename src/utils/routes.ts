@@ -9,11 +9,12 @@ export const routes = {
   TEMPALTES: '/templates',
   ACCOUNT: '/account',
   INBOX: '/account/inbox',
-  ORGANIZATION: '/account/organizations',
+  ORGANIZATIONS: '/account/organizations',
   SETTINGS: '/account/settings',
   DASHBOARD: (hashid: string) => `/${hashid}`,
   COMPONENTS: (hashid: string) => `/${hashid}/components`,
   DOMAINS: (hashid: string) => `/${hashid}/domains`,
   TEMPLATES: (hashid: string) => `/${hashid}/templates`,
+  INVITE: (hashid: string, token: string) => `/${hashid}/invite/${token}`,
   ERROR: '/404',
 };

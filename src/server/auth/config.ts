@@ -1,9 +1,11 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { type DefaultSession, type NextAuthConfig } from 'next-auth';
-import DiscordProvider from 'next-auth/providers/discord';
-import GoogleProvider from 'next-auth/providers/google';
+import DiscordProvider, { DiscordProfile } from 'next-auth/providers/discord';
+import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
+import { env } from '~/env';
 
 import { db } from '~/server/db';
+import { routes } from '~/utils/routes';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -36,9 +38,39 @@ declare module 'next-auth' {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+  pages: {
+    signOut: routes.SIGN_OUT,
+    signIn: routes.SIGN_IN,
+  },
   providers: [
-    DiscordProvider,
-    GoogleProvider,
+    DiscordProvider({
+      clientId: env.AUTH_DISCORD_ID,
+      clientSecret: env.AUTH_DISCORD_SECRET,
+      profile: (profile: DiscordProfile) => {
+        return {
+          id: profile.sub,
+          firstName: profile.given_name,
+          lastName: profile.family_name,
+          email: profile.email,
+          emailVerified: profile.email_verified,
+          image: profile.picture,
+        };
+      },
+    }),
+    GoogleProvider({
+      clientId: env.AUTH_GOOGLE_ID,
+      clientSecret: env.AUTH_GOOGLE_SECRET,
+      profile: (profile: GoogleProfile) => {
+        return {
+          id: profile.sub,
+          firstName: profile.given_name,
+          lastName: profile.family_name,
+          email: profile.email,
+          emailVerified: profile.email_verified,
+          image: profile.picture,
+        };
+      },
+    }),
     /**
      * ...add more providers here.
      *
@@ -50,11 +82,6 @@ export const authConfig = {
      */
   ],
   adapter: PrismaAdapter(db),
-  events: {
-    createUser: async ({ user }) => {
-      //
-    },
-  },
   callbacks: {
     session: ({ session, user }) => ({
       ...session,

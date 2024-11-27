@@ -48,7 +48,7 @@ export class OrganizationService {
     return await this.db.organization.count({ where });
   }
 
-  public async addUsers(id: number, userIds: number[]): Promise<void> {
+  public async addInvitedUser(id: number, userIds: number[]): Promise<void> {
     await this.db.organization.update({
       where: { id },
       data: {

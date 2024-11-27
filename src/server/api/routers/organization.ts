@@ -125,18 +125,18 @@ export const organizationRouter = createTRPCRouter({
       return input.emails; //TODO: Implement: Invite Users
     }),
 
-  addUsers: protectedProcedure
+  addInvitedUser: protectedProcedure
     .input(
       z.object({
         hashid: z.string(),
-        userHashids: z.array(z.string()),
+        userIds: z.array(z.number()),
       }),
     )
     .mutation(({ ctx, input }) => {
       const organizationId = ctx.hashidService.decode(input.hashid);
-      const userIds = input.userHashids.map((hashid) =>
-        ctx.hashidService.decode(hashid),
+      return ctx.organizationService.addInvitedUser(
+        organizationId,
+        input.userIds,
       );
-      return ctx.organizationService.addUsers(organizationId, userIds);
     }),
 });

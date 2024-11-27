@@ -163,7 +163,7 @@ model OrganizationUser {
     @@map("organizations_users")
 }
 
-model InviteToken {
+model Invite {
     token String @id @default(uuid())
 
     createdAt DateTime @default(now()) @map("created_at")
@@ -176,7 +176,7 @@ model InviteToken {
 
     @@index([createdAt])
     @@index([email])
-    @@map("invite_tokens")
+    @@map("invites")
 }
 
 model Organization {
@@ -193,7 +193,7 @@ model Organization {
     organizationTemplates OrganizationTemplate[]
     createdTemplates      Template[]
     customComponents      CustomComponent[]
-    inviteTokens          InviteToken[]
+    inviteTokens          Invite[]
 
     @@index([createdAt])
     @@map("organizations")

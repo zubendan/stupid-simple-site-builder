@@ -10,6 +10,7 @@
 import { TRPCError, initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
+import { Resend } from 'resend';
 
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
@@ -40,6 +41,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   });
 
   const session = await auth();
+  const resend = new Resend(env.RESEND_API_KEY);
   const hashidService = new HashidService(sqids);
   const userService = new UserService(db);
   const organizationService = new OrganizationService(db);
@@ -49,6 +51,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
     db,
     session,
+    resend,
     hashidService,
     userService,
     organizationService,

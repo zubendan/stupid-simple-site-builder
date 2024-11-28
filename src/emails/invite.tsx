@@ -15,17 +15,17 @@ import * as React from 'react';
 import { text } from 'stream/consumers';
 
 interface InviteEmailProps {
-  organizatoinHashid: string;
   token: string;
-  organizationName: Organization['name'];
   baseUrl: string;
+  organizationName: Organization['name'];
+  organizationHashid: string;
 }
 
 export const InviteEmail = ({
+  token,
   baseUrl,
   organizationName,
-  organizatoinHashid,
-  token,
+  organizationHashid,
 }: InviteEmailProps) => (
   <Html>
     <Head />
@@ -47,7 +47,7 @@ export const InviteEmail = ({
         <Section style={section}>
           <Link
             style={button}
-            href={`${baseUrl}/${organizatoinHashid}/invite/${token}`}
+            href={`${baseUrl}/${organizationHashid}/invite/${token}`}
           >
             Join {organizationName}
           </Link>
@@ -58,7 +58,7 @@ export const InviteEmail = ({
 );
 
 InviteEmail.PreviewProps = {
-  organizatoinHashid: 'hashid',
+  organizationHashid: 'hashid',
   organizationName: 'Microsoft',
   baseUrl: 'https://localhost:3000',
   token: 'token',

@@ -7,6 +7,11 @@ import {
 } from '~/dtos/organization';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { OrganizationUserRoleType } from '~/types/role';
+import { InviteEmail } from '~/emails/invite';
+import { env } from '~/env';
+import { add } from 'date-fns';
+
+const { BASE_URL } = env;
 
 export const organizationRouter = createTRPCRouter({
   list: protectedProcedure
@@ -121,13 +126,39 @@ export const organizationRouter = createTRPCRouter({
     }),
 
   inviteUsers: protectedProcedure
-    .input(z.object({ emails: z.array(z.string()) }))
-    .mutation(({ ctx, input }) => {
+    .input(
+      z.object({ emails: z.array(z.string()), organizationHashid: z.string() }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+      const org = await ctx.db.organization.findUniqueOrThrow({
+        where: {
+          id: organizationId,
+        },
+      });
+
       for (const email of input.emails) {
-        const user = ctx.db.user.findUnique({ where: { email } });
+        const user = await ctx.db.user.findUnique({ where: { email } });
+        const invite = await ctx.db.invite.create({
+          data: {
+            organizationId,
+            email,
+            expiresAt: add(new Date(), { days: 5 }),
+          },
+        });
 
         if (!user) {
-          // send invite link to email
+          await ctx.resend.emails.send({
+            from: 'veras.built@example.com',
+            to: email,
+            subject: `${org.name} has invited you to join their organization`,
+            react: InviteEmail({
+              baseUrl: BASE_URL,
+              organizationName: org.name,
+              organizationHashid: input.organizationHashid,
+              token: invite.token,
+            }),
+          });
         } else {
           // send invite to user inbox
         }

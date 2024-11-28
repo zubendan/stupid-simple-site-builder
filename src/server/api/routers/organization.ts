@@ -96,6 +96,7 @@ export const organizationRouter = createTRPCRouter({
         },
       });
     }),
+
   update: protectedProcedure
     .input(OrganizationUpdateDto)
     .mutation(({ ctx, input }) => {
@@ -122,21 +123,29 @@ export const organizationRouter = createTRPCRouter({
   inviteUsers: protectedProcedure
     .input(z.object({ emails: z.array(z.string()) }))
     .mutation(({ ctx, input }) => {
-      return input.emails; //TODO: Implement: Invite Users
+      for (const email of input.emails) {
+        const user = ctx.db.user.findUnique({ where: { email } });
+
+        if (!user) {
+          // send invite link to email
+        } else {
+          // send invite to user inbox
+        }
+      }
     }),
 
   addInvitedUser: protectedProcedure
     .input(
       z.object({
-        hashid: z.string(),
-        userIds: z.array(z.number()),
+        organizationHashid: z.string(),
+        userId: z.number(),
       }),
     )
     .mutation(({ ctx, input }) => {
-      const organizationId = ctx.hashidService.decode(input.hashid);
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
       return ctx.organizationService.addInvitedUser(
         organizationId,
-        input.userIds,
+        input.userId,
       );
     }),
 });

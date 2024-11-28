@@ -31,8 +31,8 @@ export async function GET(
   });
 
   await api.organization.addInvitedUser({
-    hashid: organizationHashid,
-    userIds: [user.id],
+    organizationHashid,
+    userId: user.id,
   });
 
   redirect('https://nextjs.org/');

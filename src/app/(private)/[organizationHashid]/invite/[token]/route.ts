@@ -13,7 +13,6 @@ export async function GET(
   const now = new Date();
   const { organizationHashid, token } = await params;
   const session = await auth();
-  const isUserSignedIn = !!session;
 
   const invite = await api.invite.find({
     token,
@@ -23,11 +22,7 @@ export async function GET(
     redirect(routes.INVITE_EXPIRED(organizationHashid));
   }
 
-  if (!session) {
-    redirect(`${routes.SIGN_IN}?urlCallback=${request.url}`);
-  }
-
-  if (!session.user.email) {
+  if (!session || !session.user.email) {
     redirect(`${routes.SIGN_IN}?urlCallback=${request.url}`);
   }
 

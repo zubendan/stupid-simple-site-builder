@@ -13,9 +13,62 @@ const skyfall: MantineColorsTuple = [
   '#244488',
 ];
 
+const sharedInputProps = {
+  defaultProps: {
+    size: 'md',
+  },
+};
+
 export const mantineTheme: MantineThemeOverride = {
   primaryColor: 'skyfall',
   colors: {
     skyfall,
+  },
+  components: {
+    TextInput: {
+      ...sharedInputProps,
+    },
+    ColorInput: {
+      ...sharedInputProps,
+    },
+    Input: {
+      ...sharedInputProps,
+    },
+    JsonInput: {
+      ...sharedInputProps,
+    },
+    NativeSelect: {
+      ...sharedInputProps,
+    },
+    NumberInput: {
+      ...sharedInputProps,
+    },
+    PasswordInput: {
+      ...sharedInputProps,
+    },
+    SegmentedControl: {
+      ...sharedInputProps,
+    },
+    Autocomplete: {
+      ...sharedInputProps,
+    },
+    MultiSelect: {
+      ...sharedInputProps,
+    },
+    PillsInput: {
+      ...sharedInputProps,
+    },
+    Select: {
+      ...sharedInputProps,
+    },
+    TagsInput: {
+      ...sharedInputProps,
+    },
+    Button: {
+      ...sharedInputProps,
+    },
+    InputBase: {
+      ...sharedInputProps,
+    },
   },
 };

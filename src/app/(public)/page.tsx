@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { auth } from '~/server/auth';
-import { HydrateClient, api } from '~/trpc/server';
+import { HydrateClient } from '~/trpc/server';
 import { routes } from '~/utils/routes';
 
 export default async function Home() {
@@ -53,6 +53,7 @@ export default async function Home() {
           </div>
         </div>
       </main>
+      //{' '}
     </HydrateClient>
   );
 }

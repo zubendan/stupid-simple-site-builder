@@ -3,6 +3,7 @@ import { fontFamily } from 'tailwindcss/defaultTheme';
 
 export default {
   content: ['./src/**/*.tsx'],
+  darkMode: ["selector", '[data-mantine-color-scheme="dark"]'],
   theme: {
     extend: {
       fontFamily: {

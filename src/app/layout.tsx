@@ -7,6 +7,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 
 import { TRPCReactProvider } from '~/trpc/react';
+import { mantineTheme } from '~/utils/theme';
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -27,7 +28,7 @@ export default async function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider defaultColorScheme='light'>
+        <MantineProvider theme={mantineTheme} defaultColorScheme='light'>
           <ModalsProvider modalProps={{ centered: true }}>
             <TRPCReactProvider>{children}</TRPCReactProvider>
             <Notifications />

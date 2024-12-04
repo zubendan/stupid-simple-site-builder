@@ -10,6 +10,7 @@ export default {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
       },
       colors: {
+        "theme-primary": "var(--mantine-primary-color-filled)",
         skyfall: {
           50:"#ecf3ff",
           100:"#dae2f8",

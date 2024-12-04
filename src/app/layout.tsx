@@ -8,6 +8,7 @@ import { Notifications } from '@mantine/notifications';
 
 import { TRPCReactProvider } from '~/trpc/react';
 import { mantineTheme } from '~/utils/theme';
+import { DashboardStoreProvider } from '~/components/private/store/provider';
 
 export const metadata: Metadata = {
   title: 'Create T3 App',

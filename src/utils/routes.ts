@@ -15,6 +15,7 @@ export const routes = {
   COMPONENTS: (hashid: string) => `/${hashid}/components`,
   DOMAINS: (hashid: string) => `/${hashid}/domains`,
   TEMPLATES: (hashid: string) => `/${hashid}/templates`,
+  USERS: (hashid: string) => `/${hashid}/users`,
   INVITE: (hashid: string, token: string) => `/${hashid}/invite/${token}`,
   INVITE_EXPIRED: (hashid: string) => `/${hashid}/invite/expired`,
   ERROR: '/404',

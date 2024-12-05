@@ -15,8 +15,10 @@ export default async function Layout({
     redirect(routes.SIGN_IN);
   }
 
+  const user = session?.user;
+
   return (
-    <DashboardStoreProvider initState={{ user: session?.user }}>
+    <DashboardStoreProvider initState={{ user }}>
       {children}
     </DashboardStoreProvider>
   );

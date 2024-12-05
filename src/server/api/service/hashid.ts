@@ -1,4 +1,5 @@
 import Sqids from 'sqids';
+import { env } from '~/env';
 
 export class HashidService {
   constructor(private readonly sqids: Sqids) {}
@@ -23,3 +24,8 @@ export class HashidService {
     return this.sqids.encode([id]);
   }
 }
+
+export const sqids = new Sqids({
+  alphabet: env.SQIDS_ALPHABET,
+  minLength: 6,
+});

@@ -16,7 +16,7 @@ import { routes } from '~/utils/routes';
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
-      id: string;
+      id: number;
       firstName?: string;
       lastName?: string;
       // ...other properties

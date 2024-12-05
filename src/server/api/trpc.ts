@@ -15,7 +15,7 @@ import { Resend } from 'resend';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
 import { UserService } from './service/user';
-import { HashidService } from './service/hashid';
+import { HashidService, sqids } from './service/hashid';
 import { OrganizationService } from './service/organization';
 import Sqids from 'sqids';
 import { env } from '~/env';
@@ -35,11 +35,6 @@ import { DomainService } from './service/domain';
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const sqids = new Sqids({
-    alphabet: env.SQIDS_ALPHABET,
-    minLength: 6,
-  });
-
   const session = await auth();
   const resend = new Resend(env.RESEND_API_KEY);
   const hashidService = new HashidService(sqids);

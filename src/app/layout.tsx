@@ -1,14 +1,18 @@
 import '~/styles/globals.css';
 
-import { GeistSans } from 'geist/font/sans';
-import { type Metadata } from 'next';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+import { type Metadata } from 'next';
+import { Rubik } from 'next/font/google';
 
 import { TRPCReactProvider } from '~/trpc/react';
 import { mantineTheme } from '~/utils/theme';
-import { DashboardStoreProvider } from '~/components/private/store/provider';
+
+const rubik = Rubik({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -22,7 +26,7 @@ export default async function RootLayout({
   return (
     <html
       lang='en'
-      className={`${GeistSans.variable}`}
+      className={`font-sans ${rubik.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -30,10 +34,12 @@ export default async function RootLayout({
       </head>
       <body>
         <MantineProvider theme={mantineTheme} defaultColorScheme='light'>
-          <ModalsProvider modalProps={{ centered: true }}>
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-            <Notifications />
-          </ModalsProvider>
+          <TRPCReactProvider>
+            <ModalsProvider modalProps={{ centered: true }}>
+              {children}
+              <Notifications />
+            </ModalsProvider>
+          </TRPCReactProvider>
         </MantineProvider>
       </body>
     </html>

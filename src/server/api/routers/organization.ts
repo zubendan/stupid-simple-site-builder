@@ -20,7 +20,7 @@ export const organizationRouter = createTRPCRouter({
         page: z.number(),
         perPage: z.number(),
         search: z.string(),
-        userHashid: z.string().optional(),
+        userId: z.number().optional(),
         deleted: z.boolean().optional().default(false),
       }),
     )
@@ -28,9 +28,7 @@ export const organizationRouter = createTRPCRouter({
       const searchTerms = input.search.trim().length
         ? input.search.trim().split(/\s+/)
         : [];
-      const userId = input.userHashid
-        ? ctx.hashidService.decode(input.userHashid)
-        : null;
+      const userId = input.userId ? input.userId : null;
       const whereClause: Prisma.OrganizationWhereInput =
         ctx.organizationService.listSearchWhere({
           searchTerms,

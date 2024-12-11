@@ -1,7 +1,7 @@
 'use client';
+import { useShallow } from 'zustand/react/shallow';
 import { useDashboardStore } from '~/components/private/store/provider';
 import { api } from '~/trpc/react';
-import { useShallow } from 'zustand/react/shallow';
 
 export default function Page() {
   const { user } = useDashboardStore(
@@ -18,10 +18,6 @@ export default function Page() {
 
   const organizations = data?.organizations;
 
-  if (!isLoading && organizations && organizations?.length < 1) {
-    // create or join an organization
-  }
-
   if (!isLoading) {
     // biome-ignore lint/suspicious/noConsole: <explanation>
     console.log({ user, organizations }, 'log');
@@ -31,12 +27,14 @@ export default function Page() {
     <main className='min-h-lvh'>
       {isLoading ? (
         <div>Loading...</div>
-      ) : (
+      ) : organizations && organizations?.length > 0 ? (
         <>
           {organizations?.map((organization) => (
             <div key={organization.id}>{organization.name}</div>
           ))}
         </>
+      ) : (
+        <div>Looks like you don't have any organizations yet</div>
       )}
     </main>
   );

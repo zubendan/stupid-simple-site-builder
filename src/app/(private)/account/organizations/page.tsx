@@ -1,5 +1,6 @@
 'use client';
 import { useShallow } from 'zustand/react/shallow';
+import { CreateOrganizationButton } from '~/app/(private)/_components/organizations/CreateButton';
 import { useDashboardStore } from '~/components/private/store/provider';
 import { api } from '~/trpc/react';
 
@@ -29,12 +30,16 @@ export default function Page() {
         <div>Loading...</div>
       ) : organizations && organizations?.length > 0 ? (
         <>
+          <CreateOrganizationButton />
           {organizations?.map((organization) => (
             <div key={organization.id}>{organization.name}</div>
           ))}
         </>
       ) : (
-        <div>Looks like you don't have any organizations yet</div>
+        <div>
+          <CreateOrganizationButton />
+          Looks like you don't have any organizations yet
+        </div>
       )}
     </main>
   );

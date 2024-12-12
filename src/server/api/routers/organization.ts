@@ -71,7 +71,7 @@ export const organizationRouter = createTRPCRouter({
   create: protectedProcedure
     .input(OrganizationCreateDto)
     .mutation(async ({ ctx, input }) => {
-      const userId = ctx.hashidService.decode(input.userHashid);
+      const userId = ctx.session.user.id;
 
       return ctx.db.organization.create({
         data: {

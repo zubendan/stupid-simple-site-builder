@@ -5,6 +5,22 @@
 import './src/env.js';
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  typescript: {
+    // this is OK because we're doing type checking in a separate step of CI
+    ignoreBuildErrors: true,
+  },
+  images: {
+    dangerouslyAllowSVG: true,
+      remotePatterns: [
+        {
+          protocol: "https",
+          hostname: "placehold.co",
+          port: "",
+          pathname: "/**",
+        },
+      ],
+    },
+};
 
 export default config;

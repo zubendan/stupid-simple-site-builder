@@ -1,13 +1,10 @@
 import { z } from 'zod';
 
-export const OrganizationCrudDto = z.object({
+export const OrganizationCreateDto = z.object({
   name: z.string(),
   image: z.string().optional(),
 });
 
-export const OrganizationCreateDto = OrganizationCrudDto.extend({
-  userHashid: z.string(),
-});
-export const OrganizationUpdateDto = OrganizationCrudDto.extend({
+export const OrganizationUpdateDto = OrganizationCreateDto.extend({
   hashid: z.string(),
 });

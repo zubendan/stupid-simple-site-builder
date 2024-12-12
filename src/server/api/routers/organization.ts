@@ -47,7 +47,10 @@ export const organizationRouter = createTRPCRouter({
       });
 
       return {
-        organizations,
+        organizations: organizations.map(({ id, ...org }) => ({
+          ...org,
+          hashid: ctx.hashidService.encode(id),
+        })),
         pageCount: Math.ceil(totalCount / input.perPage),
       };
     }),

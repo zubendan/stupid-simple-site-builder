@@ -3,6 +3,7 @@ import '~/styles/globals.css';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { type Metadata } from 'next';
 import { Rubik } from 'next/font/google';
 
@@ -35,10 +36,12 @@ export default async function RootLayout({
       <body>
         <MantineProvider theme={mantineTheme} defaultColorScheme='light'>
           <TRPCReactProvider>
-            <ModalsProvider modalProps={{ centered: true }}>
-              {children}
-              <Notifications />
-            </ModalsProvider>
+            <NuqsAdapter>
+              <ModalsProvider modalProps={{ centered: true }}>
+                {children}
+                <Notifications />
+              </ModalsProvider>
+            </NuqsAdapter>
           </TRPCReactProvider>
         </MantineProvider>
       </body>

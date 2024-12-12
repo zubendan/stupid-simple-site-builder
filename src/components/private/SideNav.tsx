@@ -1,3 +1,5 @@
+'use client';
+
 import { IconProps, Icon } from '@iconify/react/dist/iconify.js';
 import { Group, Tooltip, UnstyledButton } from '@mantine/core';
 import Link from 'next/link';
@@ -63,8 +65,6 @@ export const SideNav = ({
   organizationHashid,
 }: { organizationHashid: string }) => {
   const pathname = usePathname();
-  const path = pathname.split('/');
-  const page = path[1];
   const linkData: TLinkItem[] = [
     {
       icon: 'tabler:template',
@@ -92,22 +92,23 @@ export const SideNav = ({
     },
   ];
 
-  const headPath = `/${page}`;
-  const [active, setActive] = useState(headPath);
+  const [active, setActive] = useState(pathname);
 
   return (
-    <nav className='w-full h-lvh py-6 px-3 flex flex-col justify-start items-center'>
-      {linkData.map((link, index) => (
-        <NavLink
-          key={index}
-          icon={link.icon}
-          label={link.label}
-          href={link.href}
-          active={active === link.href}
-          onClick={() => setActive(link.href)}
-          isCollapsed={false}
-        />
-      ))}
+    <nav className='w-full h-lvh py-6 pl-3 flex flex-col justify-start items-center shadow-md'>
+      {linkData.map((link, index) => {
+        return (
+          <NavLink
+            key={index}
+            icon={link.icon}
+            label={link.label}
+            href={link.href}
+            active={active === link.href}
+            onClick={() => setActive(link.href)}
+            isCollapsed={false}
+          />
+        );
+      })}
     </nav>
   );
 };

@@ -21,7 +21,7 @@ export const DashboardStoreProvider = ({
   children,
   initState,
 }: DashboardStoreProviderProps) => {
-  const storeRef = useRef<StoreApi<TDashboardStore>>(undefined);
+  const storeRef = useRef<StoreApi<TDashboardStore>>();
   if (!storeRef.current) {
     storeRef.current = createDashboardStore(initState);
   }

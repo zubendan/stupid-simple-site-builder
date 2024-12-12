@@ -1,3 +1,4 @@
+'use client';
 import { api } from '~/trpc/react';
 import { useQueryStates } from 'nuqs';
 import { searchParams } from '~/utils/searchParams';
@@ -16,6 +17,8 @@ export default async function Page({
   });
 
   const users = data?.users;
+
+  console.log({ users });
 
   return (
     <div>

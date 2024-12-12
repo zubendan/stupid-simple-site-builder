@@ -6,7 +6,7 @@ export const routes = {
   DO_NOT_SELL: '/about/do-not-sell',
   PRIVACY: '/about/privacy',
   TERMS_OF_USE: '/about/terms-of-use',
-  TEMPALTES: '/templates',
+  PUBLIC_TEMPALTES: '/templates',
   ACCOUNT: '/account',
   INBOX: '/account/inbox',
   ORGANIZATIONS: '/account/organizations',

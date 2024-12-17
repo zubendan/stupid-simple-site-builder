@@ -93,4 +93,9 @@ export const authConfig = {
       },
     }),
   },
+  events: {
+    createUser: async ({ user }) => {
+      // await prisma.
+    },
+  },
 } satisfies NextAuthConfig;

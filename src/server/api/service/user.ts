@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { UserRoleType } from '~/types/role';
+import { OrganizationUserRoleType, UserRoleType } from '~/types/role';
 import { containsSearchTerms } from '~/utils/prisma';
 
 export class UserService {
@@ -7,12 +7,14 @@ export class UserService {
 
   public listSearchWhere({
     searchTerms,
-    roles,
+    userRoles,
+    organizationUserRoles,
     organizationId,
     deleted,
   }: {
     searchTerms: string[];
-    roles: UserRoleType[];
+    userRoles: UserRoleType[];
+    organizationUserRoles: OrganizationUserRoleType[];
     organizationId: number | null;
     deleted: boolean;
   }): Prisma.UserWhereInput {
@@ -28,7 +30,20 @@ export class UserService {
             some: {
               role: {
                 name: {
-                  in: roles,
+                  in: userRoles,
+                },
+              },
+            },
+          },
+          organizationUsers: {
+            some: {
+              roles: {
+                some: {
+                  role: {
+                    name: {
+                      in: organizationUserRoles,
+                    },
+                  },
                 },
               },
             },
@@ -46,25 +61,28 @@ export class UserService {
             ]
           : []),
         ...(deleted ? [{ NOT: { deletedAt: null } }] : [{ deletedAt: null }]),
-        ...(searchTerms.length ? [{ OR: containedSearchTerms }] : []),
+        ...(searchTerms.length > 0 ? [{ OR: containedSearchTerms }] : []),
       ],
     };
   }
 
   public async listSearchTotal({
     searchTerms,
-    roles,
+    userRoles,
+    organizationUserRoles,
     organizationId,
     deleted,
   }: {
     searchTerms: string[];
-    roles: UserRoleType[];
+    userRoles: UserRoleType[];
+    organizationUserRoles: OrganizationUserRoleType[];
     organizationId: number | null;
     deleted: boolean;
   }): Promise<number> {
     const where = this.listSearchWhere({
       searchTerms,
-      roles,
+      userRoles,
+      organizationUserRoles,
       organizationId,
       deleted,
     });

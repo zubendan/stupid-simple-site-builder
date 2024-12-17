@@ -2,7 +2,12 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
-import { UserRoleType, allUserRoles } from '~/types/role';
+import {
+  UserRoleType,
+  allUserRoles,
+  OrganizationUserRoleType,
+  allOrganizationUserRoles,
+} from '~/types/role';
 
 export const userRouter = createTRPCRouter({
   list: protectedProcedure
@@ -11,10 +16,14 @@ export const userRouter = createTRPCRouter({
         page: z.number(),
         perPage: z.number(),
         search: z.string(),
-        roles: z
+        userRoles: z
           .array(z.nativeEnum(UserRoleType))
           .optional()
           .default(allUserRoles),
+        organizationUserRoles: z
+          .array(z.nativeEnum(OrganizationUserRoleType))
+          .optional()
+          .default(allOrganizationUserRoles),
         organizationHashid: z.string().optional(),
         deleted: z.boolean().optional().default(false),
       }),
@@ -31,16 +40,19 @@ export const userRouter = createTRPCRouter({
       const whereClause: Prisma.UserWhereInput =
         ctx.userService.listSearchWhere({
           searchTerms,
-          roles: input.roles,
+          userRoles: input.userRoles,
+          organizationUserRoles: input.organizationUserRoles,
           organizationId,
           deleted: input.deleted,
         });
       const totalCount = await ctx.userService.listSearchTotal({
         searchTerms,
-        roles: input.roles,
+        userRoles: input.userRoles,
+        organizationUserRoles: input.organizationUserRoles,
         organizationId,
         deleted: input.deleted,
       });
+      console.log({ whereClause });
       const users = await ctx.db.user.findMany({
         where: whereClause,
         include: {

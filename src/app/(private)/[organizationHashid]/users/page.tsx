@@ -3,7 +3,7 @@ import { api } from '~/trpc/react';
 import { use } from 'react';
 import { useQueryStates } from 'nuqs';
 import { searchParams } from '~/utils/searchParams';
-import { UserRoleType } from '~/types/role';
+import { UserRoleType, allUserRoles } from '~/types/role';
 
 export default function Page({
   params,
@@ -15,7 +15,6 @@ export default function Page({
     page,
     perPage,
     search,
-    userRoles: [UserRoleType.USER],
     organizationHashid,
     // deleted: false,
   });

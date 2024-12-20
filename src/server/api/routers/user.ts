@@ -52,13 +52,21 @@ export const userRouter = createTRPCRouter({
         organizationId,
         deleted: input.deleted,
       });
-      console.log({ whereClause });
       const users = await ctx.db.user.findMany({
         where: whereClause,
         include: {
           userRoles: {
             include: {
               role: true,
+            },
+          },
+          organizationUsers: {
+            include: {
+              roles: {
+                include: {
+                  role: true,
+                },
+              },
             },
           },
           accounts: true,
@@ -88,6 +96,7 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
   findByEmail: protectedProcedure
     .input(z.object({ email: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -99,6 +108,34 @@ export const userRouter = createTRPCRouter({
               role: true,
             },
           },
+        },
+      });
+    }),
+
+  organizationUserList: protectedProcedure
+    .input(
+      z.object({
+        page: z.number(),
+        perPage: z.number(),
+        search: z.string(),
+        userRoles: z
+          .array(z.nativeEnum(UserRoleType))
+          .optional()
+          .default(allUserRoles),
+        organizationUserRoles: z
+          .array(z.nativeEnum(OrganizationUserRoleType))
+          .optional()
+          .default(allOrganizationUserRoles),
+        organizationHashid: z.string(),
+        deleted: z.boolean().optional().default(false),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+
+      const users = await ctx.db.organizationUser.findMany({
+        where: {
+          organizationId,
         },
       });
     }),

@@ -95,7 +95,25 @@ export const authConfig = {
   },
   events: {
     createUser: async ({ user }) => {
-      // await prisma.
+      const userId = user.id ? +user.id : null;
+      if (!userId) {
+        return;
+      }
+      await db.user.update({
+        where: { id: userId },
+        data: {
+          userRoles: {
+            create: {
+              role: {
+                connectOrCreate: {
+                  where: { name: 'user' },
+                  create: { name: 'user' },
+                },
+              },
+            },
+          },
+        },
+      });
     },
   },
 } satisfies NextAuthConfig;

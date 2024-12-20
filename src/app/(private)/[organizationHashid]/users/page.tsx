@@ -1,31 +1,22 @@
 'use client';
 import { api } from '~/trpc/react';
+import { use } from 'react';
 import { useQueryStates } from 'nuqs';
 import { searchParams } from '~/utils/searchParams';
+import { UserRoleType } from '~/types/role';
 
 export default function Page({
   params,
 }: { params: Promise<{ organizationHashid: string }> }) {
   const [{ page, perPage, search }, setParams] = useQueryStates(searchParams);
-
-  const getParams = async () => {
-    const thing = await params;
-    console.log({ thing });
-    return thing;
-  };
-
-  getParams();
-
-  params.then((res) => {
-    console.log({ res });
-  });
+  const { organizationHashid } = use(params);
 
   const { data, isLoading } = api.user.list.useQuery({
     page,
     perPage,
     search,
-    roles: [],
-    // organizationHashid: (await params).organizationHashid,
+    userRoles: [UserRoleType.USER],
+    organizationHashid,
     // deleted: false,
   });
 

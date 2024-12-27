@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { api } from '~/trpc/react';
 
 export const schema = z.object({
-  name: z.string(),
+  name: z.string().min(2),
   image: z.any(),
 });
 
@@ -21,6 +21,10 @@ export type TFormInputs = z.infer<typeof schema>;
 export const OrganizationUpdateCreateForm = () => {
   const form = useForm<TFormInputs>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: '',
+      image: null,
+    },
   });
 
   const utils = api.useUtils();

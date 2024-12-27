@@ -112,7 +112,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  organizationUserList: protectedProcedure
+  listForOrganization: protectedProcedure
     .input(
       z.object({
         page: z.number(),
@@ -133,10 +133,54 @@ export const userRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const organizationId = ctx.hashidService.decode(input.organizationHashid);
 
-      const users = await ctx.db.organizationUser.findMany({
-        where: {
+      const searchTerms = input.search.trim().length
+        ? input.search.trim().split(/\s+/)
+        : [];
+
+      const whereClause: Prisma.OrganizationUserWhereInput =
+        ctx.userService.organizationUserListSearchWhere({
+          searchTerms,
+          userRoles: input.userRoles,
+          organizationUserRoles: input.organizationUserRoles,
           organizationId,
-        },
+          deleted: input.deleted,
+        });
+
+      const totalCount = await ctx.userService.organizationUserListSearchTotal({
+        searchTerms,
+        userRoles: input.userRoles,
+        organizationUserRoles: input.organizationUserRoles,
+        organizationId,
+        deleted: input.deleted,
       });
+
+      const organizationUsers = await ctx.db.organizationUser.findMany({
+        where: whereClause,
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+
+          user: {
+            include: {
+              userRoles: {
+                include: {
+                  role: true,
+                },
+              },
+              accounts: true,
+            },
+          },
+        },
+        take: input.perPage,
+        skip: (input.page - 1) * input.perPage,
+      });
+
+      return {
+        organizationUsers,
+        pageCount: Math.ceil(totalCount / input.perPage),
+      };
     }),
 });

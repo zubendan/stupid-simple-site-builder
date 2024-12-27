@@ -1,9 +1,8 @@
 'use client';
-import { api } from '~/trpc/react';
-import { use } from 'react';
 import { useQueryStates } from 'nuqs';
+import { use } from 'react';
+import { api } from '~/trpc/react';
 import { searchParams } from '~/utils/searchParams';
-import { UserRoleType, allUserRoles } from '~/types/role';
 
 export default function Page({
   params,
@@ -11,24 +10,23 @@ export default function Page({
   const [{ page, perPage, search }, setParams] = useQueryStates(searchParams);
   const { organizationHashid } = use(params);
 
-  const { data, isLoading } = api.user.list.useQuery({
+  const { data, isLoading } = api.user.listForOrganization.useQuery({
     page,
     perPage,
     search,
     organizationHashid,
-    // deleted: false,
   });
 
-  const users = data?.users;
+  const organizationUsers = data?.organizationUsers;
 
   return (
     <div>
       {isLoading ? (
         <div>Loading...</div>
-      ) : users && users?.length > 0 ? (
+      ) : organizationUsers && organizationUsers?.length > 0 ? (
         <>
-          {users?.map((user) => (
-            <div key={user.id}>{user.firstName}</div>
+          {organizationUsers?.map((orgUser) => (
+            <div key={orgUser.user.id}>{orgUser.user.firstName}</div>
           ))}
         </>
       ) : (

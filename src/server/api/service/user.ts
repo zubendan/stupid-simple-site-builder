@@ -89,4 +89,77 @@ export class UserService {
 
     return await this.db.user.count({ where });
   }
+
+  public organizationUserListSearchWhere({
+    searchTerms,
+    userRoles,
+    organizationUserRoles,
+    organizationId,
+    deleted,
+  }: {
+    searchTerms: string[];
+    userRoles: UserRoleType[];
+    organizationUserRoles: OrganizationUserRoleType[];
+    organizationId: number;
+    deleted: boolean;
+  }): Prisma.OrganizationUserWhereInput {
+    const containedSearchTerms = containsSearchTerms<Prisma.UserWhereInput>(
+      searchTerms,
+      ['email', 'firstName', 'lastName'],
+    );
+
+    return {
+      AND: [
+        {
+          organizationId,
+          roles: {
+            some: {
+              role: {
+                name: {
+                  in: organizationUserRoles,
+                },
+              },
+            },
+          },
+          user: {
+            userRoles: {
+              some: {
+                role: {
+                  name: {
+                    in: userRoles,
+                  },
+                },
+              },
+            },
+            ...(deleted ? { NOT: { deletedAt: null } } : { deletedAt: null }),
+            ...(searchTerms.length > 0 ? [{ OR: containedSearchTerms }] : []),
+          },
+        },
+      ],
+    };
+  }
+
+  public async organizationUserListSearchTotal({
+    searchTerms,
+    userRoles,
+    organizationUserRoles,
+    organizationId,
+    deleted,
+  }: {
+    searchTerms: string[];
+    userRoles: UserRoleType[];
+    organizationUserRoles: OrganizationUserRoleType[];
+    organizationId: number;
+    deleted: boolean;
+  }): Promise<number> {
+    const where = this.organizationUserListSearchWhere({
+      searchTerms,
+      userRoles,
+      organizationUserRoles,
+      organizationId,
+      deleted,
+    });
+
+    return await this.db.organizationUser.count({ where });
+  }
 }

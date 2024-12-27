@@ -71,6 +71,7 @@
       "linter": {
         "rules": {
           "correctness": {
+            "noUnusedImports": "warn",
             "noConstAssign": "off",
             "noGlobalObjectCalls": "off",
             "noInvalidBuiltinInstantiation": "off",
@@ -92,7 +93,7 @@
             "noDuplicateObjectKeys": "off",
             "noDuplicateParameters": "off",
             "noFunctionAssign": "off",
-            "noImportAssign": "off",
+            "noImportAssign": "warn",
             "noRedeclare": "off",
             "noUnsafeNegation": "off",
             "useGetterReturn": "off"
@@ -126,7 +127,7 @@
             "noDuplicateObjectKeys": "off",
             "noDuplicateParameters": "off",
             "noFunctionAssign": "off",
-            "noImportAssign": "off",
+            "noImportAssign": "warn",
             "noRedeclare": "off",
             "noUnsafeNegation": "off",
             "useGetterReturn": "off"

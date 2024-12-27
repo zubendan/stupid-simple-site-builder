@@ -10,6 +10,7 @@ import { OrganizationUserRoleType } from '~/types/role';
 import { InviteEmail } from '~/emails/invite';
 import { env } from '~/env';
 import { add } from 'date-fns';
+import { CreateEmailResponse } from 'resend';
 
 const { BASE_URL } = env;
 
@@ -147,9 +148,10 @@ export const organizationRouter = createTRPCRouter({
             expiresAt: add(new Date(), { days: 5 }),
           },
         });
+        let response: CreateEmailResponse;
 
         if (!user) {
-          await ctx.resend.emails.send({
+          response = await ctx.resend.emails.send({
             from: 'veras.built@example.com',
             to: email,
             subject: `${org.name} has invited you to join their organization`,
@@ -161,8 +163,21 @@ export const organizationRouter = createTRPCRouter({
             }),
           });
         } else {
-          // send invite to user inbox
+          // TODO: send invite to user inbox instead
+          response = await ctx.resend.emails.send({
+            from: 'veras.built@example.com',
+            to: email,
+            subject: `${org.name} has invited you to join their organization`,
+            react: InviteEmail({
+              baseUrl: BASE_URL,
+              organizationName: org.name,
+              organizationHashid: input.organizationHashid,
+              token: invite.token,
+            }),
+          });
         }
+
+        return response;
       }
     }),
 

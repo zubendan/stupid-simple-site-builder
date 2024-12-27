@@ -11,6 +11,7 @@ import { InviteEmail } from '~/emails/invite';
 import { env } from '~/env';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { OrganizationUserRoleType } from '~/types/role';
+import { TRPCError } from '@trpc/server';
 
 const { BASE_URL } = env;
 
@@ -152,7 +153,7 @@ export const organizationRouter = createTRPCRouter({
 
         if (!user) {
           response = await ctx.resend.emails.send({
-            from: 'veras.built@example.com',
+            from: 'VERSA@versabuilt.co',
             to: email,
             subject: `${org.name} has invited you to join their organization`,
             react: InviteEmail({
@@ -165,7 +166,7 @@ export const organizationRouter = createTRPCRouter({
         } else {
           // TODO: send invite to user inbox instead
           response = await ctx.resend.emails.send({
-            from: 'veras.built@example.com',
+            from: 'VERSA@versabuilt.co',
             to: email,
             subject: `${org.name} has invited you to join their organization`,
             react: InviteEmail({
@@ -177,7 +178,15 @@ export const organizationRouter = createTRPCRouter({
           });
         }
 
-        return response;
+        if (response.data) {
+          return response.data;
+        } else {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: response.error?.name,
+            cause: response.error?.name,
+          });
+        }
       }
     }),
 

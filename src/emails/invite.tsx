@@ -1,18 +1,14 @@
 import { Organization } from '@prisma/client';
 import {
   Body,
-  Button,
   Container,
   Head,
   Html,
-  Img,
   Link,
   Preview,
   Section,
   Text,
 } from '@react-email/components';
-import * as React from 'react';
-import { text } from 'stream/consumers';
 
 interface InviteEmailProps {
   token: string;

@@ -1,13 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Group, SimpleGrid } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
-import { TextInput } from 'react-hook-form-mantine';
 import { z } from 'zod';
 
 import { api } from '~/trpc/react';
+import { EmailInput } from '../formInputs/EmailInput';
 
 export const schema = z.object({
   emails: z.array(z.string().email()).min(1),
@@ -15,13 +15,11 @@ export const schema = z.object({
 
 export type TFormInputs = z.infer<typeof schema>;
 
-export interface IOrganizationUpdateCreateFormProps {
+export interface IInviteFormProps {
   organizationHashid: string;
 }
 
-export const OrganizationUpdateCreateForm = ({
-  organizationHashid,
-}: IOrganizationUpdateCreateFormProps) => {
+export const InviteForm = ({ organizationHashid }: IInviteFormProps) => {
   const form = useForm<TFormInputs>({
     resolver: zodResolver(schema),
   });
@@ -45,17 +43,15 @@ export const OrganizationUpdateCreateForm = ({
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <SimpleGrid cols={2}>
-          <TextInput<TFormInputs>
-            required
-            label='Name'
-            placeholder='Enter Organization Name'
-            name='emails'
-          />
-        </SimpleGrid>
+        <EmailInput<TFormInputs>
+          required
+          label='Emails'
+          placeholder="Enter Emails of the users you'd like to invite"
+          name='emails'
+        />
         <Group className='justify-end pt-4'>
           <Button type='submit' disabled={!form.formState.isDirty}>
-            Create
+            Invite
           </Button>
         </Group>
       </form>

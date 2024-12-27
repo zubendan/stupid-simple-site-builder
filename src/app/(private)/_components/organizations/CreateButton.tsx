@@ -2,7 +2,6 @@
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Button } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import React from 'react';
 
 import { OrganizationUpdateCreateForm } from '~/app/(private)/_components/organizations/CreateForm';
 

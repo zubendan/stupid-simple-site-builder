@@ -1,12 +1,12 @@
 'use client';
 
-import { createContext, type ReactNode, useContext, useRef } from 'react';
+import { type ReactNode, createContext, useContext, useRef } from 'react';
 import { type StoreApi, useStore } from 'zustand';
 
 import {
-  createDashboardStore,
   type TDashboardStore,
   type TDashboardStoreValues,
+  createDashboardStore,
 } from './store';
 
 export const DashboardStoreContext =

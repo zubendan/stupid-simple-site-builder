@@ -3,9 +3,9 @@ import '~/styles/globals.css';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { type Metadata } from 'next';
 import { Rubik } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { TRPCReactProvider } from '~/trpc/react';
 import { mantineTheme } from '~/utils/theme';

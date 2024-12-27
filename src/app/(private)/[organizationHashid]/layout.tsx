@@ -1,5 +1,5 @@
-import { SideNav } from '~/components/private/SideNav';
 import cn from 'classnames';
+import { SideNav } from '~/components/private/SideNav';
 
 export default async function Layout({
   children,

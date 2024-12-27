@@ -8,19 +8,18 @@
  */
 
 import { TRPCError, initTRPC } from '@trpc/server';
+import { Resend } from 'resend';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
-import { Resend } from 'resend';
 
+import { env } from '~/env';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
-import { UserService } from './service/user';
+import { DomainService } from './service/domain';
 import { HashidService, sqids } from './service/hashid';
 import { OrganizationService } from './service/organization';
-import Sqids from 'sqids';
-import { env } from '~/env';
 import { TemplateService } from './service/template';
-import { DomainService } from './service/domain';
+import { UserService } from './service/user';
 
 /**
  * 1. CONTEXT

@@ -2,11 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Divider, Group, Image, SimpleGrid } from '@mantine/core';
+import { MIME_TYPES } from '@mantine/dropzone';
 import { modals } from '@mantine/modals';
 import NextImage from 'next/image';
-import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
-import { TextInput, FileInput } from 'react-hook-form-mantine';
+import { FileInput, TextInput } from 'react-hook-form-mantine';
 import { z } from 'zod';
 
 import { api } from '~/trpc/react';

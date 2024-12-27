@@ -4,7 +4,6 @@ import { Button, SimpleGrid } from '@mantine/core';
 import { getProviders, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { auth } from '~/server/auth';
 import { getSession } from '~/server/functions/auth';
 import { routes } from '~/utils/routes';
 

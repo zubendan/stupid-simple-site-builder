@@ -1,12 +1,12 @@
 'use client';
 
-import { IconProps, Icon } from '@iconify/react/dist/iconify.js';
+import { Icon, IconProps } from '@iconify/react/dist/iconify.js';
 import { Group, Tooltip, UnstyledButton } from '@mantine/core';
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import React, { useState } from 'react';
-import { routes } from '~/utils/routes';
 import cn from 'classnames';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { routes } from '~/utils/routes';
 
 type TLinkItem = {
   icon: IconProps['icon'];

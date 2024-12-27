@@ -3,6 +3,7 @@ import { useQueryStates } from 'nuqs';
 import { use } from 'react';
 import { api } from '~/trpc/react';
 import { searchParams } from '~/utils/searchParams';
+import { InviteButton } from '../../_components/organizations/InviteButton';
 
 export default function Page({
   params,
@@ -21,6 +22,7 @@ export default function Page({
 
   return (
     <div>
+      <InviteButton organizationHashid={organizationHashid} />
       {isLoading ? (
         <div>Loading...</div>
       ) : organizationUsers && organizationUsers?.length > 0 ? (

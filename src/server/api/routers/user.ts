@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import {
-  UserRoleType,
-  allUserRoles,
   OrganizationUserRoleType,
+  UserRoleType,
   allOrganizationUserRoles,
+  allUserRoles,
 } from '~/types/role';
 
 export const userRouter = createTRPCRouter({

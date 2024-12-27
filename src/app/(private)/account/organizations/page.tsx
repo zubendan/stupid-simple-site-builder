@@ -1,11 +1,11 @@
 'use client';
-import { Button, Stack, Image } from '@mantine/core';
-import { useShallow } from 'zustand/react/shallow';
+import { Image, Stack } from '@mantine/core';
 import NextImage from 'next/image';
+import Link from 'next/link';
+import { useShallow } from 'zustand/react/shallow';
 import { CreateOrganizationButton } from '~/app/(private)/_components/organizations/CreateButton';
 import { useDashboardStore } from '~/components/private/store/provider';
 import { api } from '~/trpc/react';
-import Link from 'next/link';
 import { routes } from '~/utils/routes';
 
 export default function Page() {

@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { api } from '~/trpc/react';
 import { EmailInput } from '../formInputs/EmailInput';
+import { notifications } from '@mantine/notifications';
 
 export const schema = z.object({
   emails: z.array(z.string().email()).min(1),
@@ -37,6 +38,15 @@ export const InviteForm = ({ organizationHashid }: IInviteFormProps) => {
       modals.closeAll();
       form.reset();
       await utils.organization.list.invalidate();
+      data.forEach((res) => {
+        if (res.error) {
+          notifications.show({
+            title: 'Error',
+            message: res.error.message,
+            color: 'red',
+          });
+        }
+      });
     }
   };
 

@@ -1,10 +1,10 @@
 import { Organization } from '@prisma/client';
 import {
   Body,
+  Button,
   Container,
   Head,
   Html,
-  Link,
   Preview,
   Section,
   Text,
@@ -41,12 +41,12 @@ export const InviteEmail = ({
         </Text>
 
         <Section style={section}>
-          <Link
+          <Button
             style={button}
             href={`${baseUrl}/${organizationHashid}/invite/${token}`}
           >
             Join {organizationName}
-          </Link>
+          </Button>
         </Section>
       </Container>
     </Body>

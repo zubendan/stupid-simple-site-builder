@@ -11,7 +11,6 @@ import { InviteEmail } from '~/emails/invite';
 import { env } from '~/env';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { OrganizationUserRoleType } from '~/types/role';
-import { TRPCError } from '@trpc/server';
 
 const { BASE_URL } = env;
 
@@ -140,6 +139,8 @@ export const organizationRouter = createTRPCRouter({
         },
       });
 
+      const responses: CreateEmailResponse[] = [];
+
       for (const email of input.emails) {
         const user = await ctx.db.user.findUnique({ where: { email } });
         const invite = await ctx.db.invite.create({
@@ -149,10 +150,9 @@ export const organizationRouter = createTRPCRouter({
             expiresAt: add(new Date(), { days: 5 }),
           },
         });
-        let response: CreateEmailResponse;
 
         if (!user) {
-          response = await ctx.resend.emails.send({
+          const res = await ctx.resend.emails.send({
             from: 'VERSA@versabuilt.co',
             to: email,
             subject: `${org.name} has invited you to join their organization`,
@@ -163,9 +163,10 @@ export const organizationRouter = createTRPCRouter({
               token: invite.token,
             }),
           });
+          responses.push(res);
         } else {
           // TODO: send invite to user inbox instead
-          response = await ctx.resend.emails.send({
+          const res = await ctx.resend.emails.send({
             from: 'VERSA@versabuilt.co',
             to: email,
             subject: `${org.name} has invited you to join their organization`,
@@ -176,18 +177,10 @@ export const organizationRouter = createTRPCRouter({
               token: invite.token,
             }),
           });
-        }
-
-        if (response.data) {
-          return response.data;
-        } else {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: response.error?.name,
-            cause: response.error?.name,
-          });
+          responses.push(res);
         }
       }
+      return responses;
     }),
 
   addInvitedUser: protectedProcedure

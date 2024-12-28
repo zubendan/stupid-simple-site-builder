@@ -9,7 +9,11 @@ import {
 } from '~/dtos/organization';
 import { InviteEmail } from '~/emails/invite';
 import { env } from '~/env';
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '~/server/api/trpc';
 import { OrganizationUserRoleType } from '~/types/role';
 
 const { BASE_URL } = env;
@@ -183,7 +187,7 @@ export const organizationRouter = createTRPCRouter({
       return responses;
     }),
 
-  addInvitedUser: protectedProcedure
+  addInvitedUser: publicProcedure
     .input(
       z.object({
         organizationHashid: z.string(),

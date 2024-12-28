@@ -5,10 +5,10 @@ import { api } from '~/trpc/server';
 import { routes } from '~/utils/routes';
 
 export async function GET(
+  request: Request,
   {
     params,
   }: { params: Promise<{ organizationHashid: string; token: string }> },
-  request: Request,
 ) {
   const now = new Date();
   const { organizationHashid, token } = await params;

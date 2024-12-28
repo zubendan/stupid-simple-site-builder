@@ -1,7 +1,11 @@
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from '~/server/api/trpc';
 import {
   OrganizationUserRoleType,
   UserRoleType,
@@ -97,7 +101,7 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  findByEmail: protectedProcedure
+  findByEmail: publicProcedure
     .input(z.object({ email: z.string() }))
     .query(async ({ ctx, input }) => {
       return ctx.db.user.findUniqueOrThrow({

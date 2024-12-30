@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { OrganizationUserRoleType } from '~/types/role';
 import { containsSearchTerms } from '~/utils/prisma';
 
 export class OrganizationService {
@@ -55,6 +56,20 @@ export class OrganizationService {
         organizationUsers: {
           create: {
             userId,
+            roles: {
+              create: {
+                role: {
+                  connectOrCreate: {
+                    where: {
+                      name: OrganizationUserRoleType.ORGANIZATION_USER,
+                    },
+                    create: {
+                      name: OrganizationUserRoleType.ORGANIZATION_USER,
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },

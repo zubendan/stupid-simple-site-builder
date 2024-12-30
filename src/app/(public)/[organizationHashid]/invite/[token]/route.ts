@@ -35,5 +35,9 @@ export async function GET(
     userId: user.id,
   });
 
-  redirect('https://nextjs.org/');
+  await api.invite.delete({
+    token,
+  });
+
+  redirect(routes.ORGANIZATIONS);
 }

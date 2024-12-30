@@ -43,7 +43,7 @@ export default function Page() {
             <SimpleGrid cols={1} className='w-[300px]'>
               {googleProvider && (
                 <Button
-                  onClick={() => signIn(googleProvider.id)}
+                  onClick={() => signIn(googleProvider.id, {})}
                   leftSection={
                     <Icon
                       icon='tabler:brand-google-filled'

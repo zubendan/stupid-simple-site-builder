@@ -10,4 +10,12 @@ export const inviteRouter = createTRPCRouter({
         where: { token: input.token },
       });
     }),
+
+  delete: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.invite.delete({
+        where: { token: input.token },
+      });
+    }),
 });

@@ -1,14 +1,15 @@
 'use client';
-import { Image, Stack } from '@mantine/core';
-import NextImage from 'next/image';
-import Link from 'next/link';
+import { Loader, Stack } from '@mantine/core';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { CreateOrganizationButton } from '~/app/(private)/_components/organizations/CreateButton';
 import { useDashboardStore } from '~/components/private/store/provider';
-import { api } from '~/trpc/react';
+import { api, RouterOutputs } from '~/trpc/react';
 import { routes } from '~/utils/routes';
 
 export default function Page() {
+  const router = useRouter();
   const { user } = useDashboardStore(
     useShallow((s) => ({
       user: s.user,
@@ -23,47 +24,38 @@ export default function Page() {
 
   const organizations = data?.organizations;
 
-  if (!isLoading) {
-    // biome-ignore lint/suspicious/noConsole: <explanation>
-    console.log({ user, organizations }, 'log');
-  }
+  useEffect(() => {
+    if (!isLoading && organizations && organizations.length > 0) {
+      if (organizations[0]) {
+        router.replace(routes.TEMPLATES(organizations[0].hashid));
+      }
+    }
+  }, [isLoading]);
+
+  const handleCreateOrganizationSuccess = (
+    org: RouterOutputs['organization']['create'],
+  ) => {
+    router.push(routes.TEMPLATES(org.hashid));
+  };
 
   return (
-    <main className='min-h-lvh'>
-      {isLoading ? (
-        <div>Loading...</div>
-      ) : organizations && organizations?.length > 0 ? (
-        <>
-          <CreateOrganizationButton />
-          <Stack>
-            {organizations?.map((organization) => (
-              <div
-                className='bg-neutral-200 flex justify-around items-center px-8 py-4 rounded-xl text-lg font-bold'
-                key={organization.hashid}
-              >
-                <Link
-                  className='flex max-w-[400px] w-full items-center justify-start gap-x-3'
-                  href={routes.TEMPLATES(organization.hashid)}
-                >
-                  <Image
-                    className='flex justify-center items-center bg-neutral-300 size-14'
-                    component={NextImage}
-                    src={organization.image || null}
-                    alt='Placeholder'
-                    height={150}
-                    width={150}
-                    fallbackSrc='https://placehold.co/150x150/png?text=Placeholder'
-                  />
-                  {organization.name}
-                </Link>
-              </div>
-            ))}
-          </Stack>
-        </>
+    <main className='min-h-lvh flex'>
+      {isLoading || (organizations && organizations?.length > 0) ? (
+        <div className='flex-1 flex justify-center items-center'>
+          <Loader type='dots' size='xl' />
+        </div>
       ) : (
-        <div>
-          <CreateOrganizationButton />
-          Looks like you don't have any organizations yet
+        <div className='flex-1 flex justify-center items-center'>
+          <div className='border-2 border-neutral-600 border-solid rounded-lg p-8 flex'>
+            <Stack>
+              Looks like you don't have any organizations yet
+              <CreateOrganizationButton
+                label='Create One'
+                RightIcon={null}
+                onSuccess={handleCreateOrganizationSuccess}
+              />
+            </Stack>
+          </div>
         </div>
       )}
     </main>

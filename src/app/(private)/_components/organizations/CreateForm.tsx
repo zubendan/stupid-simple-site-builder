@@ -9,7 +9,7 @@ import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
 import { FileInput, TextInput } from 'react-hook-form-mantine';
 import { z } from 'zod';
 
-import { api } from '~/trpc/react';
+import { api, RouterOutputs } from '~/trpc/react';
 
 export const schema = z.object({
   name: z.string().min(2),
@@ -18,7 +18,13 @@ export const schema = z.object({
 
 export type TFormInputs = z.infer<typeof schema>;
 
-export const OrganizationUpdateCreateForm = () => {
+export interface IOrganizationUpdateCreateFormProps {
+  onSuccess?: (org: RouterOutputs['organization']['create']) => void;
+}
+
+export const OrganizationUpdateCreateForm = ({
+  onSuccess,
+}: IOrganizationUpdateCreateFormProps) => {
   const form = useForm<TFormInputs>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -41,6 +47,9 @@ export const OrganizationUpdateCreateForm = () => {
       modals.closeAll();
       form.reset();
       await utils.organization.list.invalidate();
+      if (typeof onSuccess === 'function') {
+        onSuccess(data);
+      }
     }
   };
 

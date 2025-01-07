@@ -15,6 +15,7 @@ import {
   publicProcedure,
 } from '~/server/api/trpc';
 import { OrganizationUserRoleType } from '~/types/role';
+import { serialize } from '~/utils/helpers';
 
 const { BASE_URL } = env;
 
@@ -81,7 +82,7 @@ export const organizationRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      return ctx.db.organization.create({
+      const org = await ctx.db.organization.create({
         data: {
           name: input.name,
           image: input.image,
@@ -106,6 +107,8 @@ export const organizationRouter = createTRPCRouter({
           },
         },
       });
+
+      return serialize(org, ctx.hashidService.encode);
     }),
 
   update: protectedProcedure

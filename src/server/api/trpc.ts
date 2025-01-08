@@ -16,7 +16,7 @@ import { env } from '~/env';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
 import { DomainService } from './service/domain';
-import { HashidService, sqids } from './service/hashid';
+import { HashidService } from './service/hashid';
 import { OrganizationService } from './service/organization';
 import { TemplateService } from './service/template';
 import { UserService } from './service/user';
@@ -36,7 +36,7 @@ import { UserService } from './service/user';
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
   const resend = new Resend(env.RESEND_API_KEY);
-  const hashidService = new HashidService(sqids);
+  const hashidService = new HashidService();
   const userService = new UserService(db);
   const organizationService = new OrganizationService(db);
   const templateService = new TemplateService(db);

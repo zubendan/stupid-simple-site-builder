@@ -15,7 +15,6 @@ import {
   publicProcedure,
 } from '~/server/api/trpc';
 import { OrganizationUserRoleType } from '~/types/role';
-import { serialize } from '~/utils/helpers';
 
 const { BASE_URL } = env;
 
@@ -108,7 +107,9 @@ export const organizationRouter = createTRPCRouter({
         },
       });
 
-      return serialize(org, ctx.hashidService.encode);
+      const organization = ctx.hashidService.serialize(org);
+
+      return organization;
     }),
 
   update: protectedProcedure

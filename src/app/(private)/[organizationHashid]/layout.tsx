@@ -1,15 +1,25 @@
+'use client';
 import cn from 'classnames';
+import { use } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { SideNav } from '~/components/private/SideNav';
+import { useDashboardStore } from '~/components/private/store/provider';
 
-export default async function Layout({
+export default function Layout({
+  organizations,
   children,
   params,
 }: {
+  organizations: React.ReactNode;
   children: React.ReactNode;
   params: Promise<{ organizationHashid: string }>;
 }) {
-  const { organizationHashid } = await params;
-  const isCollapsed = false;
+  const { organizationHashid } = use(params);
+  const { isCollapsed } = useDashboardStore(
+    useShallow((s) => ({
+      isCollapsed: s.isSidebarCollapsed,
+    })),
+  );
 
   return (
     <main className='grid grid-cols-[100%] grid-rows-[auto_1fr]'>
@@ -26,7 +36,11 @@ export default async function Layout({
           },
         )}
       >
-        <SideNav organizationHashid={organizationHashid} />
+        {organizations}
+        <SideNav
+          organizationHashid={organizationHashid}
+          organizationMenu={organizations}
+        />
         <section className='bg-blue-500'>{children}</section>
       </div>
     </main>

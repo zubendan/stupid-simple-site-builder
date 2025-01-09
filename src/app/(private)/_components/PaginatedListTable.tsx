@@ -12,7 +12,6 @@ interface IPaginatedListTable
     IListPaginationProps {
   isLoading?: boolean;
   name?: string;
-  perPage?: number;
   className?: string;
 }
 
@@ -21,7 +20,6 @@ export const PaginatedListTable = ({
   isLoading,
   totalPages,
   name,
-  perPage,
   className,
 }: IPaginatedListTable) => {
   return (

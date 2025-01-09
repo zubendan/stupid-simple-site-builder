@@ -43,7 +43,10 @@ export const mantineTheme: MantineThemeOverride = {
       ...sharedInputProps,
     },
     NativeSelect: {
-      ...sharedInputProps,
+      defaultProps: {
+        ...sharedInputProps.defaultProps,
+        withCheckIcon: false,
+      },
     },
     NumberInput: {
       ...sharedInputProps,
@@ -58,13 +61,19 @@ export const mantineTheme: MantineThemeOverride = {
       ...sharedInputProps,
     },
     MultiSelect: {
-      ...sharedInputProps,
+      defaultProps: {
+        ...sharedInputProps.defaultProps,
+        withCheckIcon: false,
+      },
     },
     PillsInput: {
       ...sharedInputProps,
     },
     Select: {
-      ...sharedInputProps,
+      defaultProps: {
+        ...sharedInputProps.defaultProps,
+        withCheckIcon: false,
+      },
     },
     TagsInput: {
       ...sharedInputProps,

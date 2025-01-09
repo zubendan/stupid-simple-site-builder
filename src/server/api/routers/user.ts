@@ -183,7 +183,19 @@ export const userRouter = createTRPCRouter({
       });
 
       return {
-        organizationUsers,
+        organizationUsers: organizationUsers.map(({ user, roles }) => {
+          const { userRoles, ...restUser } = user;
+          const returnUser = ctx.hashidService.serialize({
+            ...restUser,
+            organizationRoles: roles.map((r) =>
+              ctx.hashidService.serialize(r.role),
+            ),
+            userRoles: userRoles.map((r) =>
+              ctx.hashidService.serialize(r.role),
+            ),
+          });
+          return returnUser;
+        }),
         pageCount: Math.ceil(totalCount / input.perPage),
       };
     }),

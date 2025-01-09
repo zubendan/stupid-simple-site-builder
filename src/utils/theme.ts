@@ -25,6 +25,11 @@ export const mantineTheme: MantineThemeOverride = {
     skyfall,
   },
   components: {
+    MenuItem: {
+      defaultProps: {
+        closeMenuOnClick: true,
+      },
+    },
     TextInput: {
       ...sharedInputProps,
     },

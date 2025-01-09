@@ -6,11 +6,9 @@ import { SideNav } from '~/components/private/SideNav';
 import { useDashboardStore } from '~/components/private/store/provider';
 
 export default function Layout({
-  organizations,
   children,
   params,
 }: {
-  organizations: React.ReactNode;
   children: React.ReactNode;
   params: Promise<{ organizationHashid: string }>;
 }) {
@@ -36,11 +34,7 @@ export default function Layout({
           },
         )}
       >
-        {organizations}
-        <SideNav
-          organizationHashid={organizationHashid}
-          organizationMenu={organizations}
-        />
+        <SideNav organizationHashid={organizationHashid} />
         <section className='bg-blue-500'>{children}</section>
       </div>
     </main>

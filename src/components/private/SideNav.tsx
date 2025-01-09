@@ -26,6 +26,7 @@ import { useDashboardStore } from './store/provider';
 import { useShallow } from 'zustand/react/shallow';
 import { signOut } from 'next-auth/react';
 import { api } from '~/trpc/react';
+import { OrganizationNavList } from '~/app/(private)/_components/organizations/NavList';
 
 type TLinkItem = {
   icon: IconProps['icon'];
@@ -82,13 +83,9 @@ function NavLink({
 
 interface ISideBarNavProps {
   organizationHashid: string;
-  organizationMenu: React.ReactNode;
 }
 
-export const SideNav = ({
-  organizationHashid,
-  organizationMenu,
-}: ISideBarNavProps) => {
+export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
   const { data: org } = api.organization.find.useQuery({
     hashid: organizationHashid,
   });
@@ -198,138 +195,150 @@ export const SideNav = ({
             </div>
           </div>
           <Divider className='my-2 border-neutral-500' />
-          <div className={`mb-2 grid w-full ${isCollapsed ? 'p-2' : 'px-2'}`}>
-            <Menu
-              width={260}
-              position='top-start'
-              transitionProps={{ transition: 'pop-bottom-left', duration: 200 }}
-              withinPortal
-              closeOnItemClick={false}
-            >
-              <MenuTarget>
-                <UnstyledButton
-                  className={cn(
-                    'grid w-full items-center gap-3 font-bold transition-colors duration-200 hover:bg-neutral-200 rounded-md',
-                    {
-                      'grid-cols-[auto_1fr] px-5 py-3': !isCollapsed,
-                      'grid-cols-1 justify-items-center p-2': isCollapsed,
-                    },
-                  )}
-                >
-                  {org?.image ? (
-                    <Image
-                      className='rounded-lg size-7 text-xs bg-neutral-500 text-transparent'
-                      src={org?.image}
-                      alt='Profile Pic'
-                      width={28}
-                      height={28}
-                    />
-                  ) : (
-                    <Avatar>
-                      <Icon icon='tabler:box' className='size-5 text-xl' />
-                    </Avatar>
-                  )}
-                  {!isCollapsed && (
-                    <div className='flex w-full items-center justify-between gap-1 pr-2'>
-                      <p className='m-0 line-clamp-1 break-all text-sm'>
-                        {org?.name}
-                      </p>
-                    </div>
-                  )}
-                </UnstyledButton>
-              </MenuTarget>
-              <MenuDropdown>
-                <div>{organizationMenu}</div>
-              </MenuDropdown>
-            </Menu>
-            <Menu
-              width={260}
-              position='top-start'
-              transitionProps={{ transition: 'pop-bottom-left', duration: 200 }}
-              withinPortal
-              closeOnItemClick={false}
-            >
-              <MenuTarget>
-                <UnstyledButton
-                  className={cn(
-                    'grid w-full items-center gap-3 font-bold transition-colors duration-200 hover:bg-neutral-200 rounded-md',
-                    {
-                      'grid-cols-[auto_1fr] px-5 py-3': !isCollapsed,
-                      'grid-cols-1 justify-items-center p-2': isCollapsed,
-                    },
-                  )}
-                >
-                  {user?.image ? (
-                    <Image
-                      className='rounded-full size-7 text-xs bg-neutral-500 text-transparent'
-                      src={user?.image}
-                      alt='Profile Pic'
-                      width={28}
-                      height={28}
-                    />
-                  ) : (
-                    <Avatar />
-                  )}
-                  {!isCollapsed && (
-                    <div className='flex w-full items-center justify-between gap-1 pr-2'>
-                      <p className='m-0 line-clamp-1 break-all text-sm'>
-                        {user?.firstName + ' ' + user?.lastName}
-                      </p>
-                    </div>
-                  )}
-                </UnstyledButton>
-              </MenuTarget>
-              <MenuDropdown>
-                {/* <ColorSchemeToggle /> */}
-                <MenuLabel>Settings</MenuLabel>
-                <MenuItem
-                  leftSection={<Icon icon='tabler:settings' fontSize='1rem' />}
-                  component={Link}
-                  href={routes.ACCOUNT}
-                >
-                  Account settings
-                </MenuItem>
-                <MenuDivider />
-                <MenuItem
-                  leftSection={<Icon icon='tabler:logout' fontSize='1rem' />}
-                  component='button'
-                  onClick={() => signOut({ callbackUrl: routes.HOME })}
-                >
-                  Sign Out
-                </MenuItem>
-              </MenuDropdown>
-            </Menu>
-            <div className='hidden sm:block'>
-              <Tooltip
-                label='Expand Navigation'
-                position='right'
-                className='rounded-md bg-neutral-950 p-2 px-3 font-bold text-white'
-                offset={12}
-                disabled={!isCollapsed}
+          {user && (
+            <div className={`mb-2 grid w-full ${isCollapsed ? 'p-2' : 'px-2'}`}>
+              <Menu
+                width={260}
+                position='top-start'
+                transitionProps={{
+                  transition: 'pop-bottom-left',
+                  duration: 200,
+                }}
+                withinPortal
+                closeOnItemClick={false}
               >
-                <UnstyledButton
-                  onClick={toggleCollapse}
-                  className={cn(
-                    'flex w-full items-center rounded-md text-sm font-bold transition-colors duration-200 hover:bg-neutral-200',
-                    {
-                      'p-3': isCollapsed,
-                      'px-6 py-3': !isCollapsed,
-                    },
-                  )}
+                <MenuTarget>
+                  <UnstyledButton
+                    className={cn(
+                      'grid w-full items-center gap-3 font-bold transition-colors duration-200 hover:bg-neutral-200 rounded-md',
+                      {
+                        'grid-cols-[auto_1fr] px-5 py-3': !isCollapsed,
+                        'grid-cols-1 justify-items-center p-2': isCollapsed,
+                      },
+                    )}
+                  >
+                    {org?.image ? (
+                      <Image
+                        className='rounded-lg size-7 text-xs bg-neutral-500 text-transparent'
+                        src={org?.image}
+                        alt='Profile Pic'
+                        width={28}
+                        height={28}
+                      />
+                    ) : (
+                      <Avatar>
+                        <Icon icon='tabler:box' className='size-5 text-xl' />
+                      </Avatar>
+                    )}
+                    {!isCollapsed && (
+                      <div className='flex w-full items-center justify-between gap-1 pr-2'>
+                        <p className='m-0 line-clamp-1 break-all text-sm'>
+                          {org?.name}
+                        </p>
+                      </div>
+                    )}
+                  </UnstyledButton>
+                </MenuTarget>
+                <MenuDropdown classNames={{ dropdown: 'rounded-lg' }}>
+                  <div>
+                    <OrganizationNavList user={user} />
+                  </div>
+                </MenuDropdown>
+              </Menu>
+              <Menu
+                width={260}
+                position='top-start'
+                transitionProps={{
+                  transition: 'pop-bottom-left',
+                  duration: 200,
+                }}
+                withinPortal
+                closeOnItemClick={false}
+              >
+                <MenuTarget>
+                  <UnstyledButton
+                    className={cn(
+                      'grid w-full items-center gap-3 font-bold transition-colors duration-200 hover:bg-neutral-200 rounded-md',
+                      {
+                        'grid-cols-[auto_1fr] px-5 py-3': !isCollapsed,
+                        'grid-cols-1 justify-items-center p-2': isCollapsed,
+                      },
+                    )}
+                  >
+                    {user?.image ? (
+                      <Image
+                        className='rounded-full size-7 text-xs bg-neutral-500 text-transparent'
+                        src={user?.image}
+                        alt='Profile Pic'
+                        width={28}
+                        height={28}
+                      />
+                    ) : (
+                      <Avatar />
+                    )}
+                    {!isCollapsed && (
+                      <div className='flex w-full items-center justify-between gap-1 pr-2'>
+                        <p className='m-0 line-clamp-1 break-all text-sm'>
+                          {user.firstName + ' ' + user.lastName}
+                        </p>
+                      </div>
+                    )}
+                  </UnstyledButton>
+                </MenuTarget>
+                <MenuDropdown classNames={{ dropdown: 'rounded-lg' }}>
+                  {/* <ColorSchemeToggle /> */}
+                  <MenuLabel>Settings</MenuLabel>
+                  <MenuItem
+                    leftSection={
+                      <Icon icon='tabler:settings' fontSize='1rem' />
+                    }
+                    component={Link}
+                    href={routes.ACCOUNT}
+                  >
+                    Account settings
+                  </MenuItem>
+                  <MenuDivider />
+                  <MenuItem
+                    leftSection={<Icon icon='tabler:logout' fontSize='1rem' />}
+                    component='button'
+                    onClick={() => signOut({ callbackUrl: routes.HOME })}
+                  >
+                    Sign Out
+                  </MenuItem>
+                </MenuDropdown>
+              </Menu>
+              <div className='hidden sm:block'>
+                <Tooltip
+                  label='Expand Navigation'
+                  position='right'
+                  className='rounded-md bg-neutral-950 p-2 px-3 font-bold text-white'
+                  offset={12}
+                  disabled={!isCollapsed}
                 >
-                  <Group className='flex-nowrap whitespace-nowrap'>
-                    <Icon
-                      icon='tabler:chevron-left'
-                      className={cn('text-xl', {
-                        'rotate-180': isCollapsed,
-                      })}
-                    />
-                    {!isCollapsed && <span>Collapse</span>}
-                  </Group>
-                </UnstyledButton>
-              </Tooltip>
+                  <UnstyledButton
+                    onClick={toggleCollapse}
+                    className={cn(
+                      'flex w-full items-center rounded-md text-sm font-bold transition-colors duration-200 hover:bg-neutral-200',
+                      {
+                        'p-3': isCollapsed,
+                        'px-6 py-3': !isCollapsed,
+                      },
+                    )}
+                  >
+                    <Group className='flex-nowrap whitespace-nowrap'>
+                      <Icon
+                        icon='tabler:chevron-left'
+                        className={cn('text-xl', {
+                          'rotate-180': isCollapsed,
+                        })}
+                      />
+                      {!isCollapsed && <span>Collapse</span>}
+                    </Group>
+                  </UnstyledButton>
+                </Tooltip>
+              </div>
             </div>
-          </div>
+          )}
         </nav>
       </ScrollArea>
     </div>

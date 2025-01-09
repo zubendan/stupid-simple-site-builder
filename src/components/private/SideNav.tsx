@@ -130,7 +130,7 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
 
   return (
     <div
-      className={`static bottom-0 left-0 top-0 z-[201] ${isCollapsed ? 'hidden sm:block' : 'block'} h-screen max-h-screen ${isImpersonating ? 'min-h-[calc(100vh-20px)]' : 'min-h-screen'} shadow-md`}
+      className={`static bottom-0 left-0 top-0 z-[201] ${isCollapsed ? 'hidden sm:block' : 'block'} h-screen max-h-screen ${isImpersonating ? 'min-h-[calc(100vh-20px)]' : 'min-h-screen'} shadow-xl`}
     >
       <ScrollArea
         h='100vh'

@@ -35,7 +35,7 @@ export default function Layout({
         )}
       >
         <SideNav organizationHashid={organizationHashid} />
-        <section className='bg-blue-500'>{children}</section>
+        <section className='pl-4 pt-4'>{children}</section>
       </div>
     </main>
   );

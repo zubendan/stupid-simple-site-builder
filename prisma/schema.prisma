@@ -97,6 +97,7 @@ model OrganizationUserRole {
     organizationUser OrganizationUser @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
     roleId           Int              @map("role_id")
     role             Role             @relation(fields: [roleId], references: [id], onDelete: Cascade)
+    color            String
 
     @@id([organizationId, userId, roleId])
     @@index(roleId)

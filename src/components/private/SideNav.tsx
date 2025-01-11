@@ -124,6 +124,12 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
       href: routes.USERS(organizationHashid),
       can: () => true,
     },
+    {
+      icon: 'tabler:settings-2',
+      label: 'Permissions',
+      href: routes.PERMISSIONS(organizationHashid),
+      can: () => true,
+    },
   ];
 
   const [active, setActive] = useState(pathname);

@@ -4,6 +4,7 @@ import { inviteRouter } from './routers/invites';
 import { organizationRouter } from './routers/organization';
 import { templateRouter } from './routers/template';
 import { userRouter } from './routers/user';
+import { organizationUserRoleRouter } from './routers/organizationRole';
 
 /**
  * This is the primary router for your server.
@@ -13,6 +14,7 @@ import { userRouter } from './routers/user';
 export const appRouter = createTRPCRouter({
   user: userRouter,
   organization: organizationRouter,
+  organizationUserRole: organizationUserRoleRouter,
   template: templateRouter,
   domain: domainRouter,
   invite: inviteRouter,

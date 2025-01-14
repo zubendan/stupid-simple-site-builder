@@ -21,6 +21,7 @@ import { OrganizationService } from './service/organization';
 import { TemplateService } from './service/template';
 import { UserService } from './service/user';
 import { OrganizationRoleService } from './service/organizationRole';
+import { OrganizationUserService } from './service/organizationUser';
 
 /**
  * 1. CONTEXT
@@ -41,6 +42,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const userService = new UserService(db);
   const organizationService = new OrganizationService(db);
   const organizationRoleService = new OrganizationRoleService(db);
+  const organizationUserService = new OrganizationUserService(db);
   const templateService = new TemplateService(db);
   const domainService = new DomainService(db);
 
@@ -54,6 +56,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     templateService,
     domainService,
     organizationRoleService,
+    organizationUserService,
     ...opts,
   };
 };

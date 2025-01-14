@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { UserRoleType } from '~/types/role';
 import { containsSearchTerms } from '~/utils/prisma';
 
-export class UserService {
+export class OrganizationUserService {
   constructor(private db: PrismaClient) {}
 
   public listSearchWhere({
@@ -15,9 +15,9 @@ export class UserService {
     searchTerms: string[];
     userSystemRoles: UserRoleType[];
     organizationUserRoles?: string[];
-    organizationId: number | null;
+    organizationId: number;
     deleted: boolean;
-  }): Prisma.UserWhereInput {
+  }): Prisma.OrganizationUserWhereInput {
     const containedSearchTerms = containsSearchTerms<Prisma.UserWhereInput>(
       searchTerms,
       ['email', 'firstName', 'lastName'],
@@ -26,46 +26,34 @@ export class UserService {
     return {
       AND: [
         {
-          userSystemRoles: {
-            some: {
-              role: {
-                name: {
-                  in: userSystemRoles,
-                },
-              },
-            },
-          },
+          organizationId,
           ...(organizationUserRoles && organizationUserRoles.length > 0
             ? {
-                organizationUsers: {
+                organizationUserRoles: {
                   some: {
-                    organizationUserRoles: {
-                      some: {
-                        role: {
-                          name: {
-                            in: organizationUserRoles,
-                          },
-                        },
+                    role: {
+                      name: {
+                        in: organizationUserRoles,
                       },
                     },
                   },
                 },
               }
             : {}),
-        },
-        ...(organizationId
-          ? [
-              {
-                organizationUsers: {
-                  some: {
-                    organizationId,
+          user: {
+            userSystemRoles: {
+              some: {
+                role: {
+                  name: {
+                    in: userSystemRoles,
                   },
                 },
               },
-            ]
-          : []),
-        ...(deleted ? [{ NOT: { deletedAt: null } }] : [{ deletedAt: null }]),
-        ...(searchTerms.length > 0 ? [{ OR: containedSearchTerms }] : []),
+            },
+            ...(deleted ? { NOT: { deletedAt: null } } : { deletedAt: null }),
+            ...(searchTerms.length > 0 ? [{ OR: containedSearchTerms }] : []),
+          },
+        },
       ],
     };
   }
@@ -80,7 +68,7 @@ export class UserService {
     searchTerms: string[];
     userSystemRoles: UserRoleType[];
     organizationUserRoles?: string[];
-    organizationId: number | null;
+    organizationId: number;
     deleted: boolean;
   }): Promise<number> {
     const where = this.listSearchWhere({
@@ -91,6 +79,6 @@ export class UserService {
       deleted,
     });
 
-    return await this.db.user.count({ where });
+    return await this.db.organizationUser.count({ where });
   }
 }

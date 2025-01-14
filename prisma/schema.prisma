@@ -72,7 +72,7 @@ model User {
 
     accounts          Account[]
     sessions          Session[]
-    userRoles         UserRole[]
+    userSystemRoles   UserSystemRole[]
     organizationUsers OrganizationUser[]
 
     @@index([createdAt])
@@ -80,31 +80,18 @@ model User {
     @@map("users")
 }
 
-model UserRole {
-    userId Int  @map("user_id")
-    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    roleId Int  @map("role_id")
-    role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+model UserSystemRole {
+    userId Int        @map("user_id")
+    user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    roleId Int        @map("role_id")
+    role   SystemRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
     @@id([userId, roleId])
     @@index(roleId)
     @@map("users_roles")
 }
 
-model OrganizationUserRole {
-    userId           Int              @map("user_id")
-    organizationId   Int              @map("organization_id")
-    organizationUser OrganizationUser @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
-    roleId           Int              @map("role_id")
-    role             Role             @relation(fields: [roleId], references: [id], onDelete: Cascade)
-    color            String
-
-    @@id([organizationId, userId, roleId])
-    @@index(roleId)
-    @@map("organizations_users_roles")
-}
-
-model Role {
+model SystemRole {
     id Int @id @default(autoincrement())
 
     createdAt DateTime  @default(now()) @map("created_at")
@@ -114,25 +101,73 @@ model Role {
     name        String  @unique
     description String?
 
-    rolePermissions   RolePermission[]
-    userRoles         UserRole[]
-    organizationRoles OrganizationUserRole[]
+    rolePermissions SystemRolePermission[]
+    userSystemRoles UserSystemRole[]
 
     @@index([createdAt])
-    @@map("roles")
+    @@map("system_roles")
 }
 
-model RolePermission {
+model SystemRolePermission {
     roleId       Int @map("role_id")
     permissionId Int @map("permission_id")
 
     permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-    role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+    role       SystemRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
     @@id([roleId, permissionId])
+    @@index(permissionId)
+    @@map("system_roles_permissions")
+}
+
+model OrganizationUserRole {
+    userId         Int @map("user_id")
+    organizationId Int @map("organization_id")
+    roleId         Int @map("role_id")
+
+    organizationUser OrganizationUser @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
+    role             OrganizationRole @relation(fields: [organizationId, roleId], references: [organizationId, id], onDelete: Cascade)
+
+    @@id([organizationId, userId, roleId])
+    @@index(userId)
+    @@index(roleId)
+    @@map("organizations_users_roles")
+}
+
+model OrganizationRole {
+    id Int @id @default(autoincrement())
+
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String
+    description String?
+
+    organizationId Int          @map("organization_id")
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    rolePermissions   OrganizationRolePermission[]
+    organizationUsers OrganizationUserRole[]
+
+    @@unique([organizationId, id])
+    @@unique([organizationId, name])
+    @@index([createdAt])
+    @@map("organizations_roles")
+}
+
+model OrganizationRolePermission {
+    organizationId Int @map("organization_id")
+    roleId         Int @map("role_id")
+    permissionId   Int @map("permission_id")
+
+    permission Permission       @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+    role       OrganizationRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+    @@id([organizationId, roleId, permissionId])
     @@index(roleId)
     @@index(permissionId)
-    @@map("roles_permissions")
+    @@map("organizations_roles_permissions")
 }
 
 model Permission {
@@ -145,7 +180,8 @@ model Permission {
     name        String  @unique
     description String?
 
-    rolePermissions RolePermission[]
+    rolePermissions             SystemRolePermission[]
+    organizationRolePermissions OrganizationRolePermission[]
 
     @@index([createdAt])
     @@map("permissions")
@@ -155,9 +191,9 @@ model OrganizationUser {
     userId         Int @map("user_id")
     organizationId Int @map("organization_id")
 
-    user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    roles        OrganizationUserRole[]
+    user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    organization          Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    organizationUserRoles OrganizationUserRole[]
 
     @@id([organizationId, userId])
     @@index(userId)
@@ -195,6 +231,7 @@ model Organization {
     createdTemplates      Template[]
     customComponents      CustomComponent[]
     inviteTokens          Invite[]
+    organizationRoles     OrganizationRole[]
 
     @@index([createdAt])
     @@map("organizations")

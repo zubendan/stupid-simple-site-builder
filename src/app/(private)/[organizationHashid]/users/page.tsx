@@ -15,7 +15,7 @@ export default function Page({
   const [{ page, perPage, search }, setParams] = useQueryStates(searchParams);
   const { organizationHashid } = use(params);
 
-  const { data, isLoading } = api.user.listForOrganization.useQuery({
+  const { data, isLoading } = api.organizationUser.list.useQuery({
     page,
     perPage,
     search,

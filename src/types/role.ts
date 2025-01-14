@@ -4,12 +4,10 @@ export enum UserRoleType {
   USER = 'user',
 }
 
-export enum OrganizationUserRoleType {
-  ORGANIZATION_ADMIN = 'organization_admin',
-  ORGANIZATION_GUEST = 'organization_guest',
-  ORGANIZATION_USER = 'organization_user',
+export enum DefaultOrganizationUserRoleType {
+  ADMIN = 'admin',
 }
 
 export const allUserRoles: UserRoleType[] = Object.values(UserRoleType);
-export const allOrganizationUserRoles: OrganizationUserRoleType[] =
-  Object.values(OrganizationUserRoleType);
+export const allDefaultOrganizationUserRoles: DefaultOrganizationUserRoleType[] =
+  Object.values(DefaultOrganizationUserRoleType);

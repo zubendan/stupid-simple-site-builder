@@ -102,7 +102,7 @@ export const authConfig = {
       await db.user.update({
         where: { id: userId },
         data: {
-          userRoles: {
+          userSystemRoles: {
             create: {
               role: {
                 connectOrCreate: {

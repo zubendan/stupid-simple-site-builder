@@ -126,7 +126,7 @@ model OrganizationUserRole {
     roleId         Int @map("role_id")
 
     organizationUser OrganizationUser @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
-    role             OrganizationRole @relation(fields: [organizationId, roleId], references: [organizationId, id], onDelete: Cascade)
+    role             OrganizationRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
     @@id([organizationId, userId, roleId])
     @@index(userId)
@@ -147,10 +147,9 @@ model OrganizationRole {
     organizationId Int          @map("organization_id")
     organization   Organization @relation(fields: [organizationId], references: [id])
 
-    rolePermissions   OrganizationRolePermission[]
-    organizationUsers OrganizationUserRole[]
+    rolePermissions        OrganizationRolePermission[]
+    organizationUsersRoles OrganizationUserRole[]
 
-    @@unique([organizationId, id])
     @@unique([organizationId, name])
     @@index([createdAt])
     @@map("organizations_roles")

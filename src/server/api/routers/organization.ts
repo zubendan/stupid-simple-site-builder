@@ -14,6 +14,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
+import { DefaultOrganizationUserRoleType } from '~/types/role';
 
 const { BASE_URL } = env;
 
@@ -84,23 +85,29 @@ export const organizationRouter = createTRPCRouter({
         data: {
           name: input.name,
           image: input.image,
+          organizationRoles: {
+            create: {
+              name: DefaultOrganizationUserRoleType.ADMIN,
+            },
+          },
           organizationUsers: {
             create: {
               userId,
-              // organizationUserRoles: {
-              //   create: {
-              //     role: {
-              //       connectOrCreate: {
-              //         where: {
-              //           organizationId_name: {
-              //             name: DefaultOrganizationUserRoleType.OWNER,
-              //           }
-              //         }
-              //       }
-              //     }
-              //   }
-              // },
             },
+          },
+        },
+        include: {
+          organizationRoles: true,
+          organizationUsers: true,
+        },
+      });
+
+      await ctx.db.organizationUserRole.create({
+        data: {
+          organizationId: org.id,
+          roleId: org.organizationRoles?.[0]?.id ?? 0,
+          organizationUser: {
+            /// finish this
           },
         },
       });

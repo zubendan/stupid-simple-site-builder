@@ -13,10 +13,11 @@ export class OrganizationRoleService {
     organizationId: number;
     deleted: boolean;
   }): Prisma.OrganizationUserRoleWhereInput {
-    const containedSearchTerms = containsSearchTerms<Prisma.RoleWhereInput>(
-      searchTerms,
-      ['name', 'description'],
-    );
+    const containedSearchTerms =
+      containsSearchTerms<Prisma.OrganizationRoleWhereInput>(searchTerms, [
+        'name',
+        'description',
+      ]);
 
     return {
       AND: [

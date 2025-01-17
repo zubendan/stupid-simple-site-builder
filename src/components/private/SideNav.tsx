@@ -126,8 +126,8 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
     },
     {
       icon: 'tabler:settings-2',
-      label: 'Permissions',
-      href: routes.PERMISSIONS(organizationHashid),
+      label: 'Settings',
+      href: routes.SETTINGS(organizationHashid),
       can: () => true,
     },
   ];

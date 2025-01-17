@@ -27,6 +27,15 @@ const config = {
         },
       ],
     },
+    redirects: async () => {
+      return [
+        {
+          source: "/:organizationHashid",
+          destination: "/:organizationHashid/templates",
+          permanent: true,
+        },
+      ];
+    },
 };
 
 export default config;

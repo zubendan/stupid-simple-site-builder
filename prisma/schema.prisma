@@ -125,6 +125,7 @@ model OrganizationUserRole {
     organizationId Int @map("organization_id")
     roleId         Int @map("role_id")
 
+    organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationUser OrganizationUser @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade)
     role             OrganizationRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
@@ -231,6 +232,7 @@ model Organization {
     customComponents      CustomComponent[]
     inviteTokens          Invite[]
     organizationRoles     OrganizationRole[]
+    organizationUserRole  OrganizationUserRole[]
 
     @@index([createdAt])
     @@map("organizations")

@@ -81,35 +81,31 @@ export const organizationRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
-      const org = await ctx.db.organization.create({
-        data: {
-          name: input.name,
-          image: input.image,
-          organizationRoles: {
-            create: {
-              name: DefaultOrganizationUserRoleType.ADMIN,
+      const org = await ctx.db.$transaction(async (tx) => {
+        const o = await tx.organization.create({
+          data: {
+            name: input.name,
+            image: input.image,
+            organizationUsers: {
+              create: {
+                userId,
+              },
             },
           },
-          organizationUsers: {
-            create: {
-              userId,
+        });
+        await tx.organizationRole.create({
+          data: {
+            organizationId: o.id,
+            name: DefaultOrganizationUserRoleType.ADMIN,
+            organizationUsersRoles: {
+              create: {
+                organizationId: o.id,
+                userId,
+              },
             },
           },
-        },
-        include: {
-          organizationRoles: true,
-          organizationUsers: true,
-        },
-      });
-
-      await ctx.db.organizationUserRole.create({
-        data: {
-          organizationId: org.id,
-          roleId: org.organizationRoles?.[0]?.id ?? 0,
-          organizationUser: {
-            /// finish this
-          },
-        },
+        });
+        return o;
       });
 
       const organization = ctx.hashidService.serialize(org);

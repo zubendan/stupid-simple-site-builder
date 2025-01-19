@@ -46,7 +46,7 @@ export const PaginatedListTable = ({
           </p>
         )
       ) : (
-        <Loader className={className} />
+        <Loader type='dots' className={className} />
       )}
       <ListPagination totalPages={totalPages} />
     </>

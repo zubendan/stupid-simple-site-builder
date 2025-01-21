@@ -6,5 +6,4 @@ export default async function Page({
 }: { params: Promise<{ organizationHashid: string }> }) {
   const { organizationHashid } = await params;
   redirect(routes.TEMPLATES(organizationHashid));
-  return null;
 }

@@ -10,13 +10,11 @@ export default async function Layout({
   invites: React.ReactNode;
   params: Promise<{ organizationHashid: string }>;
 }) {
-  const { organizationHashid } = await params;
-
   return (
-    <Stack>
+    <div>
       {users}
       <Divider />
       {invites}
-    </Stack>
+    </div>
   );
 }

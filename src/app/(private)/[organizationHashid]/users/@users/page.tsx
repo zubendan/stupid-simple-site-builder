@@ -24,7 +24,7 @@ export default function Page({
   });
   const organizationUsers = data?.organizationUsers;
   return (
-    <section className='grid grid-rows-[100%] grid-cols-[33%_1fr]'>
+    <section className='grid grid-cols-[33%_1fr] h-[55vh]'>
       <div>
         <h4 className='font-bold py-3'>Users</h4>
         <p className='text-sm text-neutral-700 pb-4'>
@@ -36,14 +36,13 @@ export default function Page({
         <InviteButton organizationHashid={organizationHashid} />
       </div>
       <div>
-        <div className='bg-neutral-200 rounded-md p-2 '>
+        <div className='bg-neutral-200 rounded-md p-2 h-[calc(100%-106px)]'>
           <ListTable
             className=''
             rowClassName='bg-inherit [&>td]:bg-inherit'
             name='Users'
             isLoading={isLoading}
             data={{
-              // head: ['User', 'Roles', 'Email', 'Created At', 'Updated At'],
               body: organizationUsers?.map((user) => [
                 <Group key={user.hashid} className='flex-nowrap'>
                   {/* <ListActionsButton>

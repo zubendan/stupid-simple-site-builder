@@ -21,12 +21,13 @@ export const inviteRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         perPage: z.number(),
-        organizationId: z.number(),
+        organizationHashid: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
       const whereClause: Prisma.InviteWhereInput = {
-        organizationId: input.organizationId,
+        organizationId,
       };
       const totalCount = await ctx.db.invite.count({
         where: whereClause,
@@ -38,7 +39,10 @@ export const inviteRouter = createTRPCRouter({
       });
 
       return {
-        invites,
+        invites: invites.map(({ organizationId, ...invite }) => ({
+          ...invite,
+          organizationHashid: ctx.hashidService.encode(organizationId),
+        })),
         pageCount: Math.ceil(totalCount / input.perPage),
       };
     }),

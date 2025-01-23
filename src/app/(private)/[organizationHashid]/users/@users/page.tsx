@@ -18,13 +18,13 @@ export default function Page({
 
   const { data, isLoading } = api.organizationUser.list.useQuery({
     page,
-    perPage,
+    perPage: 5,
     search,
     organizationHashid,
   });
   const organizationUsers = data?.organizationUsers;
   return (
-    <section className='grid grid-cols-[33%_1fr] h-[55vh]'>
+    <section className='grid grid-cols-[33%_1fr] h-[60vh]'>
       <div>
         <h4 className='font-bold py-3'>Users</h4>
         <p className='text-sm text-neutral-700 pb-4'>

@@ -8,6 +8,8 @@ import { ListTable } from '~/app/(private)/_components/ListTable';
 import { ListPagination } from '~/app/(private)/_components/Pagination';
 import { api } from '~/trpc/react';
 import { searchParams } from '~/utils/searchParams';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export default function Page({
   params,
@@ -33,16 +35,20 @@ export default function Page({
         </p>
       </div>
       <div>
-        <div className='bg-neutral-200 rounded-md p-2 h-[calc(100%-106px)]'>
+        <div
+          className={`${invites && invites?.length > 0 ? 'bg-neutral-200' : ''} rounded-md p-2 h-[calc(100%-106px)]`}
+        >
           <ListTable
             className=''
             rowClassName='bg-inherit [&>td]:bg-inherit'
             name='Invites'
             isLoading={isLoading}
             data={{
-              body: invites?.map((invite) => [
-                <Group key={invite.token} className='flex-nowrap'>
-                  {/* <ListActionsButton>
+              body: invites?.map((invite) => {
+                const expiresIn = dayjs(invite.expiresAt).fromNow();
+                return [
+                  <Group key={invite.token} className='flex-nowrap'>
+                    {/* <ListActionsButton>
                 <ActionMenuItem
                   onClick={() => openEditModal(user.hashid)}
                   icon={IconPencil}
@@ -50,15 +56,19 @@ export default function Page({
                 />
                 <DeleteUserButton hashid={user.hashid} revalidate={refetch} />
               </ListActionsButton> */}
-                  <Icon icon='tabler:clock' className='size-9' />
-                  <Stack className='gap-y-1'>
-                    <p className='font-semibold'>{invite.email}</p>
-                    <p className='text-xs font-medium text-neutral-700'>
-                      {dayjs(invite.expiresAt).diff(dayjs(), 'days')}
-                    </p>
-                  </Stack>
-                </Group>,
-              ]),
+                    <Icon
+                      icon='tabler:clock'
+                      className='size-10 bg-neutral-500 rounded-full text-white p-1'
+                    />
+                    <Stack className='gap-y-1'>
+                      <p className='font-semibold'>{invite.email}</p>
+                      <p className='text-xs font-medium text-neutral-700'>
+                        Expires {dayjs(invite.expiresAt).fromNow()}
+                      </p>
+                    </Stack>
+                  </Group>,
+                ];
+              }),
             }}
           />
         </div>

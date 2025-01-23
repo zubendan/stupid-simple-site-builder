@@ -52,7 +52,6 @@ export const organizationUserRouter = createTRPCRouter({
               role: true,
             },
           },
-
           user: {
             include: {
               userSystemRoles: {
@@ -85,6 +84,95 @@ export const organizationUserRouter = createTRPCRouter({
           },
         ),
         pageCount: Math.ceil(totalCount / input.perPage),
+      };
+    }),
+
+  infiniteList: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number(),
+        cursor: z
+          .object({
+            organizationId: z.number(),
+            userId: z.number(),
+          })
+          .nullish(),
+        direction: z.enum(['forward', 'backward']),
+        search: z.string(),
+        userSystemRoles: z
+          .array(z.nativeEnum(UserRoleType))
+          .optional()
+          .default(allUserRoles),
+        organizationUserRoles: z.array(z.string()).optional(),
+        organizationHashid: z.string(),
+        deleted: z.boolean().optional().default(false),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+
+      const searchTerms = input.search.trim().length
+        ? input.search.trim().split(/\s+/)
+        : [];
+
+      const whereClause: Prisma.OrganizationUserWhereInput =
+        ctx.organizationUserService.listSearchWhere({
+          searchTerms,
+          userSystemRoles: input.userSystemRoles,
+          organizationUserRoles: input.organizationUserRoles,
+          organizationId,
+          deleted: input.deleted,
+        });
+
+      const items = await ctx.db.organizationUser.findMany({
+        take: input.limit + 1,
+        where: whereClause,
+        cursor: input.cursor
+          ? { organizationId_userId: input.cursor }
+          : undefined,
+        include: {
+          organizationUserRoles: {
+            include: {
+              role: true,
+            },
+          },
+          user: {
+            include: {
+              userSystemRoles: {
+                include: {
+                  role: true,
+                },
+              },
+              accounts: true,
+            },
+          },
+        },
+        orderBy: {
+          joinedAt: 'desc',
+        },
+      });
+      let nextCursor: typeof input.cursor | undefined = undefined;
+      if (items.length > input.limit) {
+        const nextItem = items.pop();
+        nextCursor = {
+          organizationId: nextItem!.organizationId,
+          userId: nextItem!.userId,
+        };
+      }
+      return {
+        organizationUsers: items.map(({ user, organizationUserRoles }) => {
+          const { userSystemRoles, ...restUser } = user;
+          const returnUser = ctx.hashidService.serialize({
+            ...restUser,
+            organizationRoles: organizationUserRoles.map((r) =>
+              ctx.hashidService.serialize(r.role),
+            ),
+            userSystemRoles: userSystemRoles.map((r) =>
+              ctx.hashidService.serialize(r.role),
+            ),
+          });
+          return returnUser;
+        }),
       };
     }),
 

@@ -16,12 +16,15 @@ export default function Page({
   const [{ page, perPage, search }, setParams] = useQueryStates(searchParams);
   const { organizationHashid } = use(params);
 
-  const { data, isLoading } = api.organizationUser.list.useQuery({
-    page,
-    perPage: 5,
-    search,
-    organizationHashid,
-  });
+  const { data, isLoading } = api.organizationUser.list.useQuery(
+    {
+      page,
+      perPage: 5,
+      search,
+      organizationHashid,
+    },
+    {},
+  );
   const organizationUsers = data?.organizationUsers;
   return (
     <section className='grid grid-cols-[33%_1fr] h-[60vh]'>

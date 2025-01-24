@@ -28,26 +28,25 @@ export default function Layout({
   };
 
   return (
-    <section>
-      <Group>Settings</Group>
-      <Tabs
-        className='w-auto grid-cols-[1fr] grid-rows-[auto_1fr]'
-        value={pathname}
-        onChange={handleChange}
-        classNames={{
-          tab: 'data-[active]:border-neutral-950 dark:data-[active]:border-neutral-300 rounded-t-lg',
-        }}
-      >
-        <div>
-          <TabsList className='mt-4 pl-[--mantine-spacing-xl]'>
+    <section className='grid grid-rows-[auto_1fr] gap-4 h-full'>
+      <div>
+        <Group>Settings</Group>
+        <Tabs
+          value={pathname}
+          onChange={handleChange}
+          classNames={{
+            tab: 'data-[active]:border-skyfall-500 rounded-t-md hover:bg-skyfall-50 hover:border-skyfall-500',
+          }}
+        >
+          <TabsList className='mt-4'>
             {tabs.map(({ label, href }) => (
               <TabsTab key={label} value={href}>
                 {startCase(label)}
               </TabsTab>
             ))}
           </TabsList>
-        </div>
-      </Tabs>
+        </Tabs>
+      </div>
       {children}
     </section>
   );

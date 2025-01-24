@@ -55,13 +55,12 @@ export const organizationUserRoleRouter = createTRPCRouter({
       return {
         organizationUserRoles: organizationUserRoles.map(({ role }) => {
           const { rolePermissions, ...restRole } = role;
-          const returnUser = ctx.hashidService.serialize({
+          return ctx.hashidService.serialize({
             ...restRole,
             permissions: rolePermissions.map((r) =>
               ctx.hashidService.serialize(r.permission),
             ),
           });
-          return returnUser;
         }),
         pageCount: Math.ceil(totalCount / input.perPage),
       };

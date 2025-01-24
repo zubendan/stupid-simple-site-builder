@@ -97,6 +97,7 @@ export const organizationRouter = createTRPCRouter({
           data: {
             organizationId: o.id,
             name: DefaultOrganizationUserRoleType.ADMIN,
+            description: 'Role with all permissions',
             organizationUsersRoles: {
               create: {
                 organizationId: o.id,

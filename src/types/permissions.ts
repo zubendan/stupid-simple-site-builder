@@ -35,3 +35,6 @@ export enum SystemPermission {
   EDIT_USERS = 'edit_users',
   DELETE_USERS = 'delete_users',
 }
+
+export const allSystemPermissions: SystemPermission[] =
+  Object.values(SystemPermission);

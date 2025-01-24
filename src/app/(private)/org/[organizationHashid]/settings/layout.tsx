@@ -30,7 +30,7 @@ export default function Layout({
   return (
     <section className='grid grid-rows-[auto_1fr] gap-4 h-full'>
       <div>
-        <Group>Settings</Group>
+        <Group className='text-2xl font-bold'>Settings</Group>
         <Tabs
           value={pathname}
           onChange={handleChange}

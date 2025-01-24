@@ -1,5 +1,5 @@
 'use client';
-import { Loader, Table, type TableProps } from '@mantine/core';
+import { Center, Loader, Table, type TableProps } from '@mantine/core';
 import cn from 'classnames';
 
 import {
@@ -46,7 +46,9 @@ export const PaginatedListTable = ({
           </p>
         )
       ) : (
-        <Loader type='dots' className={className} />
+        <Center className={className}>
+          <Loader type='dots' />
+        </Center>
       )}
       <ListPagination totalPages={totalPages} />
     </>

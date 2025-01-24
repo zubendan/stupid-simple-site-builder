@@ -192,7 +192,7 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
                     icon={link.icon}
                     label={link.label}
                     href={link.href}
-                    active={active === link.href}
+                    active={active.includes(link.href)}
                     onClick={() => setActive(link.href)}
                     isCollapsed={isCollapsed}
                   />

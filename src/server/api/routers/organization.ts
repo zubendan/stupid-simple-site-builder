@@ -15,6 +15,7 @@ import {
   publicProcedure,
 } from '~/server/api/trpc';
 import { DefaultOrganizationUserRoleType } from '~/types/role';
+import { allOrgPermissions } from '~/types/permissions';
 
 const { BASE_URL } = env;
 
@@ -103,6 +104,21 @@ export const organizationRouter = createTRPCRouter({
                 organizationId: o.id,
                 userId,
               },
+            },
+            rolePermissions: {
+              create: allOrgPermissions.map((p) => ({
+                organizationId: o.id,
+                permission: {
+                  connectOrCreate: {
+                    where: {
+                      name: p,
+                    },
+                    create: {
+                      name: p,
+                    },
+                  },
+                },
+              })),
             },
           },
         });

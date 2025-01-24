@@ -13,6 +13,7 @@ import {
 interface InviteEmailProps {
   token: string;
   baseUrl: string;
+  userName: string;
   organizationName: Organization['name'];
   organizationHashid: string;
 }
@@ -20,6 +21,7 @@ interface InviteEmailProps {
 export const InviteEmail = ({
   token,
   baseUrl,
+  userName,
   organizationName,
   organizationHashid,
 }: InviteEmailProps) => (
@@ -36,8 +38,8 @@ export const InviteEmail = ({
         /> */}
 
         <Text style={title}>
-          <strong>{organizationName}</strong> has invited you to join their
-          organization on <span style={veras}>VERAS</span>.
+          {userName} has invited you to join <strong>{organizationName}</strong>{' '}
+          on <strong style={veras}>VERSA</strong>.
         </Text>
 
         <Section style={section}>
@@ -56,6 +58,7 @@ export const InviteEmail = ({
 InviteEmail.PreviewProps = {
   organizationHashid: 'hashid',
   organizationName: 'Microsoft',
+  userName: 'John Doe',
   baseUrl: 'https://localhost:3000',
   token: 'token',
 } as InviteEmailProps;
@@ -99,7 +102,7 @@ const section = {
 const button = {
   fontSize: '14px',
   backgroundColor: '#222',
-  background: 'linear-gradient(45deg, #222, #444)',
+  background: '#222',
   color: '#fff',
   lineHeight: 1.5,
   borderRadius: '0.5em',

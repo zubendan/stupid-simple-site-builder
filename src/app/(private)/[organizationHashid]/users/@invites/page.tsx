@@ -1,14 +1,14 @@
 'use client';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { Group, Stack } from '@mantine/core';
+import { Center, Group, Loader, Stack } from '@mantine/core';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { useQueryStates } from 'nuqs';
 import { use } from 'react';
-import { ListTable } from '~/app/(private)/_components/ListTable';
-import { ListPagination } from '~/app/(private)/_components/Pagination';
+import { useInView } from 'react-intersection-observer';
+import { InfiniteList } from '~/app/(private)/_components/InfiniteList';
 import { api } from '~/trpc/react';
 import { searchParams } from '~/utils/searchParams';
-import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 export default function Page({
@@ -17,12 +17,24 @@ export default function Page({
   const [{ page, perPage }] = useQueryStates(searchParams);
   const { organizationHashid } = use(params);
 
-  const { data, isLoading } = api.invite.list.useQuery({
-    page,
-    perPage,
-    organizationHashid,
+  const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    api.invite.infiniteList.useInfiniteQuery(
+      {
+        limit: 5,
+        organizationHashid,
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    );
+  const { ref } = useInView({
+    onChange(inView) {
+      if (inView) {
+        fetchNextPage();
+      }
+    },
   });
-  const invites = data?.invites;
+  const invites = data?.pages.flatMap((page) => page.invites) ?? [];
   return (
     <section className='grid grid-cols-[33%_1fr]'>
       <div>
@@ -34,21 +46,13 @@ export default function Page({
           consequuntur? Iste, pariatur.
         </p>
       </div>
-      <div>
-        <div
-          className={`${invites && invites?.length > 0 ? 'bg-neutral-200' : ''} rounded-md p-2 h-[calc(100%-106px)]`}
-        >
-          <ListTable
-            className=''
-            rowClassName='bg-inherit [&>td]:bg-inherit'
-            name='Invites'
-            isLoading={isLoading}
-            data={{
-              body: invites?.map((invite) => {
-                const expiresIn = dayjs(invite.expiresAt).fromNow();
-                return [
-                  <Group key={invite.token} className='flex-nowrap'>
-                    {/* <ListActionsButton>
+      <div className='bg-neutral-200 rounded-md p-2 h-full overflow-auto'>
+        <InfiniteList
+          isLoading={isLoading}
+          data={invites?.map((invite) => {
+            return (
+              <Group key={invite.token} className='flex-nowrap'>
+                {/* <ListActionsButton>
                 <ActionMenuItem
                   onClick={() => openEditModal(user.hashid)}
                   icon={IconPencil}
@@ -56,23 +60,37 @@ export default function Page({
                 />
                 <DeleteUserButton hashid={user.hashid} revalidate={refetch} />
               </ListActionsButton> */}
-                    <Icon
-                      icon='tabler:clock'
-                      className='size-10 bg-neutral-500 rounded-full text-white p-1'
-                    />
-                    <Stack className='gap-y-1'>
-                      <p className='font-semibold'>{invite.email}</p>
-                      <p className='text-xs font-medium text-neutral-700'>
-                        Expires {dayjs(invite.expiresAt).fromNow()}
-                      </p>
-                    </Stack>
-                  </Group>,
-                ];
-              }),
-            }}
-          />
-        </div>
-        <ListPagination totalPages={data?.pageCount} />
+                <Icon
+                  icon='tabler:clock'
+                  className='size-10 bg-neutral-500 rounded-full text-white p-1'
+                />
+                <Stack className='gap-y-1'>
+                  <p className='font-semibold'>{invite.email}</p>
+                  <p className='text-xs font-medium text-neutral-700'>
+                    Expires {dayjs(invite.expiresAt).fromNow()}
+                  </p>
+                </Stack>
+              </Group>
+            );
+          })}
+          scrollLoaderComponent={
+            hasNextPage ? (
+              <div
+                ref={ref}
+                className={`flex justify-center items-center h-14 rounded-md ${isFetchingNextPage ? 'bg-neutral-300' : ''}`}
+              >
+                {isFetchingNextPage && <Loader type='dots' />}
+              </div>
+            ) : null
+          }
+          nothingFound={
+            <Center className='h-full'>
+              <p className='text-center text-3xl font-semibold'>
+                No pending invites
+              </p>
+            </Center>
+          }
+        />
       </div>
     </section>
   );

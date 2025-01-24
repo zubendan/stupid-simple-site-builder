@@ -1,4 +1,4 @@
-import { Divider, Stack } from '@mantine/core';
+import { Divider } from '@mantine/core';
 
 export default async function Layout({
   users,
@@ -11,10 +11,12 @@ export default async function Layout({
   params: Promise<{ organizationHashid: string }>;
 }) {
   return (
-    <div>
+    <div className='grid grid-rows-[60vh_1fr] h-full'>
       {users}
-      <Divider />
-      {invites}
+      <div className='grid grid-rows-[auto_1fr_16px] h-full'>
+        <Divider className='my-3' />
+        {invites}
+      </div>
     </div>
   );
 }

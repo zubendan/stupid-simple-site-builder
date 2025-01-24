@@ -141,6 +141,7 @@ export const organizationRouter = createTRPCRouter({
       z.object({ emails: z.array(z.string()), organizationHashid: z.string() }),
     )
     .mutation(async ({ ctx, input }) => {
+      const sender = ctx.session.user;
       const organizationId = ctx.hashidService.decode(input.organizationHashid);
       const org = await ctx.db.organization.findUniqueOrThrow({
         where: {
@@ -167,6 +168,7 @@ export const organizationRouter = createTRPCRouter({
             subject: `${org.name} has invited you to join their organization`,
             react: InviteEmail({
               baseUrl: BASE_URL,
+              userName: `${sender.firstName} ${sender.lastName}`,
               organizationName: org.name,
               organizationHashid: input.organizationHashid,
               token: invite.token,
@@ -181,6 +183,7 @@ export const organizationRouter = createTRPCRouter({
             subject: `${org.name} has invited you to join their organization`,
             react: InviteEmail({
               baseUrl: BASE_URL,
+              userName: `${sender.firstName} ${sender.lastName}`,
               organizationName: org.name,
               organizationHashid: input.organizationHashid,
               token: invite.token,

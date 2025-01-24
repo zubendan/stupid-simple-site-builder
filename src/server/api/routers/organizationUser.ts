@@ -91,13 +91,7 @@ export const organizationUserRouter = createTRPCRouter({
     .input(
       z.object({
         limit: z.number(),
-        cursor: z
-          .object({
-            organizationId: z.number(),
-            userId: z.number(),
-          })
-          .nullish(),
-        direction: z.enum(['forward', 'backward']),
+        cursor: z.string().nullish(),
         search: z.string(),
         userSystemRoles: z
           .array(z.nativeEnum(UserRoleType))
@@ -128,7 +122,12 @@ export const organizationUserRouter = createTRPCRouter({
         take: input.limit + 1,
         where: whereClause,
         cursor: input.cursor
-          ? { organizationId_userId: input.cursor }
+          ? {
+              organizationId_userId: {
+                organizationId,
+                userId: ctx.hashidService.decode(input.cursor),
+              },
+            }
           : undefined,
         include: {
           organizationUserRoles: {
@@ -154,10 +153,9 @@ export const organizationUserRouter = createTRPCRouter({
       let nextCursor: typeof input.cursor | undefined = undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
-        nextCursor = {
-          organizationId: nextItem!.organizationId,
-          userId: nextItem!.userId,
-        };
+        nextCursor = nextItem
+          ? ctx.hashidService.encode(nextItem.userId)
+          : undefined;
       }
       return {
         organizationUsers: items.map(({ user, organizationUserRoles }) => {
@@ -173,6 +171,7 @@ export const organizationUserRouter = createTRPCRouter({
           });
           return returnUser;
         }),
+        nextCursor,
       };
     }),
 

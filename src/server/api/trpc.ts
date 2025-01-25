@@ -22,6 +22,7 @@ import { TemplateService } from './service/template';
 import { UserService } from './service/user';
 import { OrganizationRoleService } from './service/organizationRole';
 import { OrganizationUserService } from './service/organizationUser';
+import { OrgPermission } from '~/types/permissions';
 
 /**
  * 1. CONTEXT
@@ -137,6 +138,73 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 /**
+ * Middleware for checking if an organization user has the required permissions to access a procedure.
+ *
+ */
+export const organizationPermissionMiddleware = (
+  permissions: OrgPermission[],
+) =>
+  t.middleware(async ({ ctx, next, getRawInput }) => {
+    const rawInput = await getRawInput();
+    if (
+      !rawInput ||
+      typeof rawInput !== 'object' ||
+      !('organizationHashid' in rawInput) ||
+      typeof rawInput.organizationHashid !== 'string'
+    ) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid input' });
+    }
+
+    const { session, db } = ctx;
+    if (!session || !session.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    const userWithPermissions = await db.organizationUser.findUniqueOrThrow({
+      where: {
+        organizationId_userId: {
+          organizationId: ctx.hashidService.decode(rawInput.organizationHashid),
+          userId: session.user.id,
+        },
+      },
+      include: {
+        organizationUserRoles: {
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const usersPermissions = userWithPermissions.organizationUserRoles.flatMap(
+      (our) => our.role.rolePermissions.map((rp) => rp.permission.name),
+    );
+    const hasRequiredPermissions = permissions.every((permission) =>
+      usersPermissions.includes(permission),
+    );
+
+    if (!hasRequiredPermissions) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Missing Required Permissions',
+      });
+    }
+    return next({
+      ctx: {
+        session: { ...session, user: session.user },
+      },
+    });
+  });
+
+/**
  * Public (unauthenticated) procedure
  *
  * This is the base piece you use to build new queries and mutations on your tRPC API. It does not
@@ -155,7 +223,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(({ ctx, next }) => {
+  .use(({ ctx, next, getRawInput }) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }

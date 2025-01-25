@@ -13,9 +13,10 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
+  organizationPermissionMiddleware,
 } from '~/server/api/trpc';
+import { allOrgPermissions, OrgPermission } from '~/types/permissions';
 import { DefaultOrganizationUserRoleType } from '~/types/role';
-import { allOrgPermissions } from '~/types/permissions';
 
 const { BASE_URL } = env;
 
@@ -154,6 +155,7 @@ export const organizationRouter = createTRPCRouter({
     }),
 
   inviteUsers: protectedProcedure
+    .use(organizationPermissionMiddleware([OrgPermission.INVITE_USERS]))
     .input(
       z.object({ emails: z.array(z.string()), organizationHashid: z.string() }),
     )

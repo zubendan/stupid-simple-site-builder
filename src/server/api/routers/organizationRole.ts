@@ -2,9 +2,13 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { OrgPermission } from '~/types/permissions';
 
 export const organizationRoleRouter = createTRPCRouter({
   list: protectedProcedure
+    .meta({
+      permissions: [OrgPermission.VIEW_ROLES],
+    })
     .input(
       z.object({
         page: z.number(),
@@ -64,6 +68,9 @@ export const organizationRoleRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
+    .meta({
+      permissions: [OrgPermission.CREATE_ROLES],
+    })
     .input(
       z.object({
         name: z.string(),
@@ -73,7 +80,7 @@ export const organizationRoleRouter = createTRPCRouter({
         permissions: z.array(z.string()),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const organizationId = ctx.hashidService.decode(input.organizationHashid);
 
       const { rolePermissions, ...restRole } =

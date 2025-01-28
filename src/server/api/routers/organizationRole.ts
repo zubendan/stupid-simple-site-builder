@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 
-export const organizationUserRoleRouter = createTRPCRouter({
+export const organizationRoleRouter = createTRPCRouter({
   list: protectedProcedure
     .input(
       z.object({
@@ -21,30 +21,26 @@ export const organizationUserRoleRouter = createTRPCRouter({
         ? input.search.trim().split(/\s+/)
         : [];
 
-      const whereClause: Prisma.OrganizationUserRoleWhereInput =
-        ctx.organizationRoleService.organizationUserRoleListSearchWhere({
+      const whereClause: Prisma.OrganizationRoleWhereInput =
+        ctx.organizationRoleService.organizationRoleListSearchWhere({
           searchTerms,
           organizationId,
           deleted: input.deleted,
         });
 
       const totalCount =
-        await ctx.organizationRoleService.organizationUserRoleListSearchTotal({
+        await ctx.organizationRoleService.organizationRoleListSearchTotal({
           searchTerms,
           organizationId,
           deleted: input.deleted,
         });
 
-      const organizationUserRoles = await ctx.db.organizationUserRole.findMany({
+      const organizationRoles = await ctx.db.organizationRole.findMany({
         where: whereClause,
         include: {
-          role: {
+          rolePermissions: {
             include: {
-              rolePermissions: {
-                include: {
-                  permission: true,
-                },
-              },
+              permission: true,
             },
           },
         },
@@ -53,16 +49,65 @@ export const organizationUserRoleRouter = createTRPCRouter({
       });
 
       return {
-        organizationUserRoles: organizationUserRoles.map(({ role }) => {
-          const { rolePermissions, ...restRole } = role;
-          return ctx.hashidService.serialize({
-            ...restRole,
-            permissions: rolePermissions.map((r) =>
-              ctx.hashidService.serialize(r.permission),
-            ),
-          });
-        }),
+        organizationUserRoles: organizationRoles.map(
+          ({ rolePermissions, ...restRole }) => {
+            return ctx.hashidService.serialize({
+              ...restRole,
+              permissions: rolePermissions.map((r) =>
+                ctx.hashidService.serialize(r.permission),
+              ),
+            });
+          },
+        ),
         pageCount: Math.ceil(totalCount / input.perPage),
       };
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        color: z.string(),
+        description: z.string().optional(),
+        organizationHashid: z.string(),
+        permissions: z.array(z.string()),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+
+      const { rolePermissions, ...restRole } =
+        await ctx.db.organizationRole.create({
+          data: {
+            name: input.name,
+            color: input.color,
+            description: input.description,
+            organizationId,
+            rolePermissions: {
+              create: input.permissions.map((permission) => ({
+                organizationId,
+                permission: {
+                  connect: {
+                    name: permission,
+                  },
+                },
+              })),
+            },
+          },
+          include: {
+            rolePermissions: {
+              include: {
+                permission: true,
+              },
+            },
+          },
+        });
+
+      return ctx.hashidService.serialize({
+        ...restRole,
+        permissions: rolePermissions.map((r) =>
+          ctx.hashidService.serialize(r.permission),
+        ),
+      });
     }),
 });

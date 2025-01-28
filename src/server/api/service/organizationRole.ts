@@ -4,7 +4,7 @@ import { containsSearchTerms } from '~/utils/prisma';
 export class OrganizationRoleService {
   constructor(private db: PrismaClient) {}
 
-  public organizationUserRoleListSearchWhere({
+  public organizationRoleListSearchWhere({
     searchTerms,
     organizationId,
     deleted,
@@ -12,7 +12,7 @@ export class OrganizationRoleService {
     searchTerms: string[];
     organizationId: number;
     deleted: boolean;
-  }): Prisma.OrganizationUserRoleWhereInput {
+  }): Prisma.OrganizationRoleWhereInput {
     const containedSearchTerms =
       containsSearchTerms<Prisma.OrganizationRoleWhereInput>(searchTerms, [
         'name',
@@ -23,16 +23,14 @@ export class OrganizationRoleService {
       AND: [
         {
           organizationId,
-          role: {
-            ...(deleted ? { NOT: { deletedAt: null } } : { deletedAt: null }),
-            ...(searchTerms.length > 0 ? [{ OR: containedSearchTerms }] : []),
-          },
+          ...(searchTerms.length > 0 ? [{ OR: containedSearchTerms }] : []),
+          ...(deleted ? { NOT: { deletedAt: null } } : { deletedAt: null }),
         },
       ],
     };
   }
 
-  public async organizationUserRoleListSearchTotal({
+  public async organizationRoleListSearchTotal({
     searchTerms,
     organizationId,
     deleted,
@@ -41,12 +39,12 @@ export class OrganizationRoleService {
     organizationId: number;
     deleted: boolean;
   }): Promise<number> {
-    const where = this.organizationUserRoleListSearchWhere({
+    const where = this.organizationRoleListSearchWhere({
       searchTerms,
       organizationId,
       deleted,
     });
 
-    return await this.db.organizationUserRole.count({ where });
+    return await this.db.organizationRole.count({ where });
   }
 }

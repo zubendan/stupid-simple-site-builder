@@ -141,68 +141,79 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * Middleware for checking if an organization user has the required permissions to access a procedure.
  *
  */
-export const organizationPermissionMiddleware = (
-  permissions: OrgPermission[],
-) =>
-  t.middleware(async ({ ctx, next, getRawInput }) => {
-    const rawInput = await getRawInput();
-    if (
-      !rawInput ||
-      typeof rawInput !== 'object' ||
-      !('organizationHashid' in rawInput) ||
-      typeof rawInput.organizationHashid !== 'string'
-    ) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid input' });
-    }
+const organizationPermissionMiddleware = t.middleware(
+  async ({ ctx, next, meta }) => {
+    const requiredPermissions =
+      meta && 'permissions' in meta
+        ? (meta.permissions as OrgPermission[])
+        : undefined;
 
     const { session, db } = ctx;
     if (!session || !session.user) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
 
-    const userWithPermissions = await db.organizationUser.findUniqueOrThrow({
-      where: {
-        organizationId_userId: {
-          organizationId: ctx.hashidService.decode(rawInput.organizationHashid),
-          userId: session.user.id,
+    if (requiredPermissions) {
+      const referer = new URL(ctx.headers.get('referer') || '');
+      const organizationHashid =
+        referer.pathname.split('/')[1] === 'org'
+          ? referer.pathname.split('/')[2]
+          : undefined;
+      if (!organizationHashid) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Organization Hashid is required',
+        });
+      }
+
+      const userWithPermissions = await db.organizationUser.findUniqueOrThrow({
+        where: {
+          organizationId_userId: {
+            organizationId: ctx.hashidService.decode(organizationHashid),
+            userId: session.user.id,
+          },
         },
-      },
-      include: {
-        organizationUserRoles: {
-          include: {
-            role: {
-              include: {
-                rolePermissions: {
-                  include: {
-                    permission: true,
+        include: {
+          organizationUserRoles: {
+            include: {
+              role: {
+                include: {
+                  rolePermissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
-
-    const usersPermissions = userWithPermissions.organizationUserRoles.flatMap(
-      (our) => our.role.rolePermissions.map((rp) => rp.permission.name),
-    );
-    const hasRequiredPermissions = permissions.every((permission) =>
-      usersPermissions.includes(permission),
-    );
-
-    if (!hasRequiredPermissions) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Missing Required Permissions',
       });
+
+      const usersPermissions =
+        userWithPermissions.organizationUserRoles.flatMap((our) =>
+          our.role.rolePermissions.map((rp) => rp.permission.name),
+        );
+      const hasRequiredPermissions = requiredPermissions
+        ? requiredPermissions.every((permission) =>
+            usersPermissions.includes(permission),
+          )
+        : true;
+
+      if (!hasRequiredPermissions) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Missing Required Permissions',
+        });
+      }
     }
     return next({
       ctx: {
         session: { ...session, user: session.user },
       },
     });
-  });
+  },
+);
 
 /**
  * Public (unauthenticated) procedure
@@ -223,6 +234,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
+  .use(organizationPermissionMiddleware)
   .use(({ ctx, next, getRawInput }) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });

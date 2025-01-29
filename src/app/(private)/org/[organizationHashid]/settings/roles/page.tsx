@@ -1,8 +1,9 @@
 'use client';
-import { Badge, Button, Group } from '@mantine/core';
+import { Badge, Group } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useQueryStates } from 'nuqs';
 import { use } from 'react';
+import { CreateOrganizationRoleButton } from '~/app/(private)/_components/organizations/roles/CreateButton';
 import { PaginatedListTable } from '~/app/(private)/_components/PaginatedListTable';
 import { api } from '~/trpc/react';
 import { DATE_TIME_FORMAT } from '~/utils/date';
@@ -26,7 +27,7 @@ export default function Page({
   return (
     <section className='grid grid-rows-[auto_1fr]'>
       <Group className='justify-end'>
-        <Button>Button</Button>
+        <CreateOrganizationRoleButton organizationHashid={organizationHashid} />
       </Group>
       <div className='grid grid-rows-[1fr_auto]'>
         <PaginatedListTable

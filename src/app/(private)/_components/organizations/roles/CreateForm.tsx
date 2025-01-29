@@ -1,14 +1,22 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Group, SimpleGrid } from '@mantine/core';
+import { Button, Divider, Group, SimpleGrid } from '@mantine/core';
 import { modals } from '@mantine/modals';
+import { startCase } from 'lodash';
 import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
-import { TextInput } from 'react-hook-form-mantine';
+import {
+  Checkbox,
+  CheckboxGroup,
+  ColorPicker,
+  Textarea,
+  TextInput,
+} from 'react-hook-form-mantine';
 import { z } from 'zod';
 import { OrganizationRoleCreateDto } from '~/dtos/organizationRole';
 
 import { api, RouterOutputs } from '~/trpc/react';
+import { allOrgPermissions } from '~/types/permissions';
 
 export const schema = OrganizationRoleCreateDto;
 
@@ -27,6 +35,7 @@ export const OrganizationRoleUpdateCreateForm = ({
     resolver: zodResolver(schema),
     defaultValues: {
       organizationHashid,
+      color: '#6b85c9',
     },
   });
 
@@ -49,14 +58,36 @@ export const OrganizationRoleUpdateCreateForm = ({
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={2} className='items-end pb-4'>
+          <ColorPicker<TFormInputs> name='color' />
           <TextInput<TFormInputs>
             required
             label='Name'
-            placeholder='Enter OrganizationRole Name'
+            placeholder='e.g. Designer'
             name='name'
           />
         </SimpleGrid>
+        <Textarea<TFormInputs>
+          name='description'
+          label='Description'
+          placeholder='Enter a description'
+        />
+        <Divider className='mb-4 my-6' />
+        <CheckboxGroup<TFormInputs>
+          name='permissions'
+          label='Permissions'
+          required
+        >
+          <SimpleGrid cols={2} className='pt-3'>
+            {allOrgPermissions.map((permission, i) => (
+              <Checkbox.Item
+                key={`${permission}-${i}`}
+                value={permission}
+                label={startCase(permission)}
+              />
+            ))}
+          </SimpleGrid>
+        </CheckboxGroup>
         <Group className='justify-end pt-4'>
           <Button type='submit' disabled={!form.formState.isDirty}>
             Create

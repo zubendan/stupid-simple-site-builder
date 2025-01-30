@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Divider, Group, SimpleGrid } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { startCase } from 'lodash';
+import { useEffect } from 'react';
 import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
 import {
   Checkbox,
@@ -24,13 +25,22 @@ export type TFormInputs = z.infer<typeof schema>;
 
 export interface IOrganizationRoleUpdateCreateFormProps {
   organizationHashid: string;
+  roleHashid?: string;
   onSuccess?: (org: RouterOutputs['organizationRole']['create']) => void;
 }
 
 export const OrganizationRoleUpdateCreateForm = ({
   onSuccess,
+  roleHashid,
   organizationHashid,
 }: IOrganizationRoleUpdateCreateFormProps) => {
+  const { data } = api.organizationRole.find.useQuery(
+    { roleHashid: roleHashid ?? '' },
+    {
+      enabled: !!roleHashid,
+    },
+  );
+
   const form = useForm<TFormInputs>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -38,6 +48,17 @@ export const OrganizationRoleUpdateCreateForm = ({
       color: '#6b85c9',
     },
   });
+
+  useEffect(() => {
+    if (data) {
+      form.reset({
+        color: data.color,
+        name: data.name,
+        description: data.description ?? undefined,
+        permissions: data.permissions.map((p) => p.name),
+      });
+    }
+  }, [data]);
 
   const utils = api.useUtils();
   const { mutateAsync: createMutation } =

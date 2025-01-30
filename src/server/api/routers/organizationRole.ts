@@ -67,6 +67,40 @@ export const organizationRoleRouter = createTRPCRouter({
       };
     }),
 
+  find: protectedProcedure
+    .meta({
+      permissions: [OrgPermission.VIEW_ROLES],
+    })
+    .input(
+      z.object({
+        roleHashid: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const roleId = ctx.hashidService.decode(input.roleHashid);
+
+      const { rolePermissions, ...role } =
+        await ctx.db.organizationRole.findUniqueOrThrow({
+          where: {
+            id: roleId,
+          },
+          include: {
+            rolePermissions: {
+              include: {
+                permission: true,
+              },
+            },
+          },
+        });
+
+      return ctx.hashidService.serialize({
+        ...role,
+        permissions: rolePermissions.map((r) =>
+          ctx.hashidService.serialize(r.permission),
+        ),
+      });
+    }),
+
   create: protectedProcedure
     .meta({
       permissions: [OrgPermission.CREATE_ROLES],

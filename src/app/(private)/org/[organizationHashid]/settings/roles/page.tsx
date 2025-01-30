@@ -1,9 +1,15 @@
 'use client';
 import { Badge, Group } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import dayjs from 'dayjs';
 import { useQueryStates } from 'nuqs';
 import { use } from 'react';
+import {
+  ActionMenuItem,
+  ListActionsButton,
+} from '~/app/(private)/_components/ListActions';
 import { CreateOrganizationRoleButton } from '~/app/(private)/_components/organizations/roles/CreateButton';
+import { OrganizationRoleUpdateCreateForm } from '~/app/(private)/_components/organizations/roles/CreateForm';
 import { PaginatedListTable } from '~/app/(private)/_components/PaginatedListTable';
 import { api } from '~/trpc/react';
 import { DATE_TIME_FORMAT } from '~/utils/date';
@@ -24,6 +30,18 @@ export default function Page({
 
   const roles = data?.organizationUserRoles;
 
+  const openEditModal = (roleHashid: string) =>
+    modals.open({
+      title: 'Create Role',
+      size: 'lg',
+      children: (
+        <OrganizationRoleUpdateCreateForm
+          organizationHashid={organizationHashid}
+          roleHashid={roleHashid}
+        />
+      ),
+    });
+
   return (
     <section className='grid grid-rows-[auto_1fr]'>
       <Group className='justify-end'>
@@ -39,17 +57,17 @@ export default function Page({
             head: ['Role', 'Description', 'Created'],
             body: roles?.map((role) => [
               <Group key={role.hashid} className='flex-nowrap'>
-                {/* <ListActionsButton>
+                <ListActionsButton>
                   <ActionMenuItem
                     onClick={() => openEditModal(role.hashid)}
-                    icon={IconPencil}
+                    icon='tabler:pencil'
                     text='Edit'
                   />
-                  <DeleteRoleButton
+                  {/* <DeleteRoleButton
                     hashid={agency.hashid}
                     revalidate={refetch}
-                  />
-                </ListActionsButton> */}
+                  /> */}
+                </ListActionsButton>
                 <Badge color={role.color}>{role.name}</Badge>
               </Group>,
               role.description,

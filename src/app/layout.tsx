@@ -37,7 +37,11 @@ export default async function RootLayout({
         <MantineProvider theme={mantineTheme} defaultColorScheme='light'>
           <TRPCReactProvider>
             <NuqsAdapter>
-              <ModalsProvider modalProps={{ centered: true }}>
+              <ModalsProvider
+                modalProps={{
+                  centered: true,
+                }}
+              >
                 {children}
                 <Notifications />
               </ModalsProvider>

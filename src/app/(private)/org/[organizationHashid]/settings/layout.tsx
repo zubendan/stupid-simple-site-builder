@@ -19,7 +19,6 @@ export default function Layout({
   const tabs = [
     { label: 'General', href: routes.SETTINGS(organizationHashid) },
     { label: 'Roles', href: routes.ROLES(organizationHashid) },
-    { label: 'Permissions', href: routes.PERMISSIONS(organizationHashid) },
   ];
 
   const handleChange = (value: string | null) => {

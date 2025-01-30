@@ -18,7 +18,6 @@ export const routes = {
   USERS: (hashid: string) => `/org/${hashid}/users`,
   SETTINGS: (hashid: string) => `/org/${hashid}/settings`,
   ROLES: (hashid: string) => `/org/${hashid}/settings/roles`,
-  PERMISSIONS: (hashid: string) => `/org/${hashid}/settings/permissions`,
   INVITE: (hashid: string, token: string) => `/org/${hashid}/invite/${token}`,
   INVITE_EXPIRED: (hashid: string) => `/org/${hashid}/invite/expired`,
   ERROR: '/404',

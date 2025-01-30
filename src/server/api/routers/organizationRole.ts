@@ -1,5 +1,9 @@
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
+import {
+  OrganizationRoleCreateDto,
+  OrganizationRoleUpdateDto,
+} from '~/dtos/organizationRole';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { OrgPermission } from '~/types/permissions';
@@ -105,15 +109,7 @@ export const organizationRoleRouter = createTRPCRouter({
     .meta({
       permissions: [OrgPermission.CREATE_ROLES],
     })
-    .input(
-      z.object({
-        name: z.string(),
-        color: z.string(),
-        description: z.string().optional(),
-        organizationHashid: z.string(),
-        permissions: z.array(z.string()),
-      }),
-    )
+    .input(OrganizationRoleCreateDto)
     .mutation(async ({ ctx, input }) => {
       const organizationId = ctx.hashidService.decode(input.organizationHashid);
 
@@ -125,6 +121,53 @@ export const organizationRoleRouter = createTRPCRouter({
             description: input.description,
             organizationId,
             rolePermissions: {
+              create: input.permissions.map((permission) => ({
+                organizationId,
+                permission: {
+                  connect: {
+                    name: permission,
+                  },
+                },
+              })),
+            },
+          },
+          include: {
+            rolePermissions: {
+              include: {
+                permission: true,
+              },
+            },
+          },
+        });
+
+      return ctx.hashidService.serialize({
+        ...restRole,
+        permissions: rolePermissions.map((r) =>
+          ctx.hashidService.serialize(r.permission),
+        ),
+      });
+    }),
+
+  update: protectedProcedure
+    .meta({
+      permissions: [OrgPermission.EDIT_ROLES],
+    })
+    .input(OrganizationRoleUpdateDto)
+    .mutation(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+      const roleId = ctx.hashidService.decode(input.roleHashid);
+
+      const { rolePermissions, ...restRole } =
+        await ctx.db.organizationRole.update({
+          where: {
+            id: roleId,
+          },
+          data: {
+            name: input.name,
+            color: input.color,
+            description: input.description,
+            rolePermissions: {
+              deleteMany: {},
               create: input.permissions.map((permission) => ({
                 organizationId,
                 permission: {

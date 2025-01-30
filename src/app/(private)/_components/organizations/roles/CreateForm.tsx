@@ -52,6 +52,7 @@ export const OrganizationRoleUpdateCreateForm = ({
   useEffect(() => {
     if (data) {
       form.reset({
+        organizationHashid,
         color: data.color,
         name: data.name,
         description: data.description ?? undefined,
@@ -63,15 +64,32 @@ export const OrganizationRoleUpdateCreateForm = ({
   const utils = api.useUtils();
   const { mutateAsync: createMutation } =
     api.organizationRole.create.useMutation();
+  const { mutateAsync: updateMutation } =
+    api.organizationRole.update.useMutation();
 
   const onSubmit: SubmitHandler<TFormInputs> = async (values) => {
-    const data = await createMutation(values);
-    if (data) {
-      modals.closeAll();
-      form.reset();
-      await utils.organizationRole.list.invalidate();
-      if (typeof onSuccess === 'function') {
-        onSuccess(data);
+    if (roleHashid) {
+      const data = await updateMutation({
+        roleHashid,
+        ...values,
+      });
+      if (data) {
+        modals.closeAll();
+        form.reset();
+        await utils.organizationRole.list.invalidate();
+        if (typeof onSuccess === 'function') {
+          onSuccess(data);
+        }
+      }
+    } else {
+      const data = await createMutation(values);
+      if (data) {
+        modals.closeAll();
+        form.reset();
+        await utils.organizationRole.list.invalidate();
+        if (typeof onSuccess === 'function') {
+          onSuccess(data);
+        }
       }
     }
   };
@@ -111,7 +129,7 @@ export const OrganizationRoleUpdateCreateForm = ({
         </CheckboxGroup>
         <Group className='justify-end pt-4'>
           <Button type='submit' disabled={!form.formState.isDirty}>
-            Create
+            {roleHashid ? 'Update' : 'Create'}
           </Button>
         </Group>
       </form>

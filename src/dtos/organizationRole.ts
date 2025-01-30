@@ -9,5 +9,5 @@ export const OrganizationRoleCreateDto = z.object({
 });
 
 export const OrganizationRoleUpdateDto = OrganizationRoleCreateDto.extend({
-  hashid: z.string(),
+  roleHashid: z.string(),
 });

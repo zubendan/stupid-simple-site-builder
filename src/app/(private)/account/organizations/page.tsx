@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { CreateOrganizationButton } from '~/app/(private)/_components/organizations/CreateButton';
 import { useDashboardStore } from '~/components/private/store/provider';
-import { api, RouterOutputs } from '~/trpc/react';
+import { RouterOutputs, api } from '~/trpc/react';
 import { routes } from '~/utils/routes';
 
 export default function Page() {

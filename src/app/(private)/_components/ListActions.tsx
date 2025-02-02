@@ -1,3 +1,4 @@
+import { Icon, IconProps } from '@iconify/react';
 /* eslint-disable @typescript-eslint/no-shadow */
 import {
   ActionIcon,
@@ -8,7 +9,6 @@ import {
   type MenuItemProps,
   MenuTarget,
 } from '@mantine/core';
-import { Icon, IconProps } from '@iconify/react';
 import Link from 'next/link';
 import React from 'react';
 

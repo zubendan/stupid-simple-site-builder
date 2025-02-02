@@ -1,22 +1,28 @@
-import { faker } from "@faker-js/faker";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { faker } from '@faker-js/faker';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 export const seedOrganizations = async (db: PrismaClient) => {
-    if (await db.organization.count()) {
-        // eslint-disable-next-line no-console
-        console.log(
-          `Organization table not empty; skipping seeding. (organization.seeder.ts)`,
-        );
-        return;
-    }
+  if (await db.organization.count()) {
+    // biome-ignore lint/suspicious/noConsole: <explanation>
+    console.log(
+      `Organization table not empty; skipping seeding. (organization.seeder.ts)`,
+    );
+    return;
+  }
 
-    const organizations: Prisma.OrganizationUncheckedCreateInput[] = [];
+  const organizations: Prisma.OrganizationUncheckedCreateInput[] = [];
 
-    for (let i = 0; i < 100; i++) {
-        organizations.push({
-            name: `${faker.company.name()}`
-        })
-    }
+  for (let i = 0; i < 100; i++) {
+    organizations.push({
+      name: `${faker.company.name()}`,
+      organizationRoles: {
+        create: {
+          name: 'Admin',
+          description: 'Role with all permissions',
+        },
+      },
+    });
+  }
 
-    await db.organization.createMany({ data: organizations });
-}
+  await db.organization.createMany({ data: organizations });
+};

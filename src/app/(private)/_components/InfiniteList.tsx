@@ -1,6 +1,6 @@
-import React from 'react';
-import cn from 'classnames';
 import { Center, Loader } from '@mantine/core';
+import cn from 'classnames';
+import React from 'react';
 
 export interface IInfiniteListProps {
   data?: React.ReactNode[];

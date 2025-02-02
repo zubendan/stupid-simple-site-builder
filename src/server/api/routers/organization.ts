@@ -15,7 +15,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
-import { allOrgPermissions, OrgPermission } from '~/types/permissions';
+import { OrgPermission, allOrgPermissions } from '~/types/permissions';
 import { DefaultOrganizationUserRoleType } from '~/types/role';
 
 const { BASE_URL } = env;

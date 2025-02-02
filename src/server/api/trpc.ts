@@ -15,14 +15,14 @@ import { ZodError } from 'zod';
 import { env } from '~/env';
 import { auth } from '~/server/auth';
 import { db } from '~/server/db';
+import { OrgPermission } from '~/types/permissions';
 import { DomainService } from './service/domain';
 import { HashidService } from './service/hashid';
 import { OrganizationService } from './service/organization';
-import { TemplateService } from './service/template';
-import { UserService } from './service/user';
 import { OrganizationRoleService } from './service/organizationRole';
 import { OrganizationUserService } from './service/organizationUser';
-import { OrgPermission } from '~/types/permissions';
+import { TemplateService } from './service/template';
+import { UserService } from './service/user';
 
 /**
  * 1. CONTEXT

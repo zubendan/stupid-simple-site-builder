@@ -12,11 +12,11 @@ import { capitalize } from 'lodash';
 import NextImage from 'next/image';
 import { useQueryStates } from 'nuqs';
 import { use } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { InfiniteList } from '~/app/(private)/_components/InfiniteList';
 import { InviteButton } from '~/app/(private)/_components/users/InviteButton';
 import { api } from '~/trpc/react';
 import { searchParams } from '~/utils/searchParams';
-import { useInView } from 'react-intersection-observer';
 
 export default function Page({
   params,

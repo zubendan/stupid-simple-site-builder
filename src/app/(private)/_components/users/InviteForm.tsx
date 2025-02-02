@@ -6,9 +6,9 @@ import { modals } from '@mantine/modals';
 import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { notifications } from '@mantine/notifications';
 import { api } from '~/trpc/react';
 import { EmailInput } from '../formInputs/EmailInput';
-import { notifications } from '@mantine/notifications';
 
 export const schema = z.object({
   emails: z.array(z.string().email()).min(1),

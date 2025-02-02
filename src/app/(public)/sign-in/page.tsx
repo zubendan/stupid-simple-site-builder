@@ -1,4 +1,4 @@
-import { redirect, RedirectType } from 'next/navigation';
+import { RedirectType, redirect } from 'next/navigation';
 import { SearchParams } from 'nuqs/server';
 import { auth } from '~/server/auth';
 import { routes } from '~/utils/routes';

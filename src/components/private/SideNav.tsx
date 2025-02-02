@@ -2,31 +2,31 @@
 
 import { Icon, IconProps } from '@iconify/react/dist/iconify.js';
 import {
+  Avatar,
   Button,
+  Divider,
   Group,
+  Image,
   Menu,
+  MenuDivider,
+  MenuDropdown,
+  MenuItem,
+  MenuLabel,
   MenuTarget,
   ScrollArea,
   Tooltip,
   UnstyledButton,
-  Image,
-  Divider,
-  Avatar,
-  MenuDropdown,
-  MenuLabel,
-  MenuItem,
-  MenuDivider,
 } from '@mantine/core';
 import cn from 'classnames';
+import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+import { OrganizationNavList } from '~/app/(private)/_components/organizations/NavList';
+import { api } from '~/trpc/react';
 import { routes } from '~/utils/routes';
 import { useDashboardStore } from './store/provider';
-import { useShallow } from 'zustand/react/shallow';
-import { signOut } from 'next-auth/react';
-import { api } from '~/trpc/react';
-import { OrganizationNavList } from '~/app/(private)/_components/organizations/NavList';
 
 type TLinkItem = {
   icon: IconProps['icon'];

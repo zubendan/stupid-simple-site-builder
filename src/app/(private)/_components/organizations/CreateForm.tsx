@@ -9,7 +9,7 @@ import { FormProvider, type SubmitHandler, useForm } from 'react-hook-form';
 import { FileInput, TextInput } from 'react-hook-form-mantine';
 import { z } from 'zod';
 
-import { api, RouterOutputs } from '~/trpc/react';
+import { RouterOutputs, api } from '~/trpc/react';
 
 export const schema = z.object({
   name: z.string().min(2),

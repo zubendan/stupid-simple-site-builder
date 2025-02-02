@@ -3,7 +3,7 @@
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
   "files": {
     "ignoreUnknown": false,
-    "include": ["src/**", "prisma/schema.prisma"]
+    "include": ["src/**", "prisma/**"]
   },
   "formatter": {
     "enabled": true,

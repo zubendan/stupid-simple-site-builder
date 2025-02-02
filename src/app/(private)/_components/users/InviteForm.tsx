@@ -37,7 +37,7 @@ export const InviteForm = ({ organizationHashid }: IInviteFormProps) => {
     if (data) {
       modals.closeAll();
       form.reset();
-      await utils.organization.list.invalidate();
+      await utils.invite.list.invalidate();
       data.forEach((res) => {
         if (res.error) {
           notifications.show({

@@ -11,6 +11,7 @@ import { InviteEmail } from '~/emails/invite';
 import { env } from '~/env';
 import {
   createTRPCRouter,
+  organizationProcedure,
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
@@ -153,7 +154,7 @@ export const organizationRouter = createTRPCRouter({
       });
     }),
 
-  inviteUsers: protectedProcedure
+  inviteUsers: organizationProcedure
     .meta({
       permissions: [OrgPermission.INVITE_USERS],
     })

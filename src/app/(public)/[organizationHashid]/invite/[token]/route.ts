@@ -23,7 +23,7 @@ export async function GET(
   }
 
   if (!session || !session.user.email) {
-    redirect(`${routes.SIGN_IN}?urlCallback=${request.url}`);
+    redirect(`${routes.SIGN_IN}?callbackUrl=${request.url}`);
   }
 
   const user = await api.user.findByEmail({

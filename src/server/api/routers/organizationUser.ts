@@ -1,11 +1,15 @@
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import {
+  createTRPCRouter,
+  organizationProcedure,
+  publicProcedure,
+} from '~/server/api/trpc';
 import { UserRoleType, allUserRoles } from '~/types/role';
 
 export const organizationUserRouter = createTRPCRouter({
-  list: protectedProcedure
+  list: organizationProcedure
     .input(
       z.object({
         page: z.number(),
@@ -87,7 +91,7 @@ export const organizationUserRouter = createTRPCRouter({
       };
     }),
 
-  infiniteList: protectedProcedure
+  infiniteList: organizationProcedure
     .input(
       z.object({
         limit: z.number(),
@@ -175,7 +179,7 @@ export const organizationUserRouter = createTRPCRouter({
       };
     }),
 
-  find: protectedProcedure
+  find: organizationProcedure
     .input(z.object({ userHashid: z.string(), organizationHashid: z.string() }))
     .query(async ({ ctx, input }) => {
       const userId = ctx.hashidService.decode(input.userHashid);
@@ -217,5 +221,43 @@ export const organizationUserRouter = createTRPCRouter({
           ctx.hashidService.serialize(r.role),
         ),
       };
+    }),
+
+  hasRoles: publicProcedure
+    .input(
+      z.object({
+        organizationHashid: z.string(),
+        userHashid: z.string(),
+        roles: z.array(z.string()),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+      const userId = ctx.hashidService.decode(input.userHashid);
+      const orgUser = await ctx.db.organizationUser.findUniqueOrThrow({
+        where: {
+          organizationId_userId: {
+            organizationId,
+            userId,
+          },
+        },
+        select: {
+          organizationUserRoles: {
+            select: {
+              role: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return input.roles.every((role) =>
+        orgUser.organizationUserRoles
+          .flatMap((r) => r.role.name)
+          .includes(role),
+      );
     }),
 });

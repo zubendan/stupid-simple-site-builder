@@ -234,8 +234,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
-  .use(organizationPermissionMiddleware)
-  .use(({ ctx, next, getRawInput }) => {
+  .use(({ ctx, next }) => {
     if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
@@ -246,3 +245,16 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+/**
+ * Protected (authenticated) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to users in the organization with the required permission, use this. It verifies
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ * Uses `referer` header to get the organization hashid
+ * Uses `meta` to get the required permissions
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const organizationProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(organizationPermissionMiddleware);

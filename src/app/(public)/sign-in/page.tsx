@@ -1,16 +1,16 @@
 import { redirect, RedirectType } from 'next/navigation';
-import { getSession } from '~/server/functions/auth';
-import { routes } from '~/utils/routes';
-import { AuthProviderList } from '../_components/AuthProviderList';
 import { SearchParams } from 'nuqs/server';
+import { auth } from '~/server/auth';
+import { routes } from '~/utils/routes';
 import { loadSearchParams } from '~/utils/searchParams';
+import { AuthProviderList } from '../_components/AuthProviderList';
 
 export default async function Page({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {
   const params = await loadSearchParams(searchParams);
   const callbackUrl = params.callbackUrl;
-  const session = await getSession();
+  const session = await auth();
   if (session) {
     redirect(routes.ORGANIZATIONS, RedirectType.replace);
   }

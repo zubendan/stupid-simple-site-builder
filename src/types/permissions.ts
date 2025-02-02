@@ -28,12 +28,12 @@ export enum OrgPermission {
 export const allOrgPermissions: OrgPermission[] = Object.values(OrgPermission);
 
 export enum SystemPermission {
-  VIEW_ORGANIZATIONS = 'view_organizations',
-  DELETE_ORGANIZATIONS = 'delete_organizations',
-  VIEW_USERS = 'view_users',
-  IMPERSONATE_USERS = 'impersonate_users',
-  EDIT_USERS = 'edit_users',
-  DELETE_USERS = 'delete_users',
+  VIEW_ORGANIZATIONS = 'system_view_organizations',
+  DELETE_ORGANIZATIONS = 'system_delete_organizations',
+  VIEW_USERS = 'system_view_users',
+  IMPERSONATE_USERS = 'system_impersonate_users',
+  EDIT_USERS = 'system_edit_users',
+  DELETE_USERS = 'system_delete_users',
 }
 
 export const allSystemPermissions: SystemPermission[] =

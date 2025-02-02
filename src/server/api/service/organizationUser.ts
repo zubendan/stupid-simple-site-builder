@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { UserRoleType } from '~/types/role';
+import { SystemRoleType } from '~/types/role';
 import { containsSearchTerms } from '~/utils/prisma';
 
 export class OrganizationUserService {
@@ -13,7 +13,7 @@ export class OrganizationUserService {
     deleted,
   }: {
     searchTerms: string[];
-    userSystemRoles: UserRoleType[];
+    userSystemRoles: SystemRoleType[];
     organizationUserRoles?: string[];
     organizationId: number;
     deleted: boolean;
@@ -66,7 +66,7 @@ export class OrganizationUserService {
     deleted,
   }: {
     searchTerms: string[];
-    userSystemRoles: UserRoleType[];
+    userSystemRoles: SystemRoleType[];
     organizationUserRoles?: string[];
     organizationId: number;
     deleted: boolean;

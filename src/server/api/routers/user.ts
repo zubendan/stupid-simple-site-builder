@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
-import { UserRoleType, allUserRoles } from '~/types/role';
+import { SystemRoleType, allSystemRoles } from '~/types/role';
 
 export const userRouter = createTRPCRouter({
   list: protectedProcedure
@@ -16,9 +16,9 @@ export const userRouter = createTRPCRouter({
         perPage: z.number(),
         search: z.string(),
         userSystemRoles: z
-          .array(z.nativeEnum(UserRoleType))
+          .array(z.nativeEnum(SystemRoleType))
           .optional()
-          .default(allUserRoles),
+          .default(allSystemRoles),
         organizationUserRoles: z.array(z.string()).optional(),
         organizationHashid: z.string().optional(),
         deleted: z.boolean().optional().default(false),

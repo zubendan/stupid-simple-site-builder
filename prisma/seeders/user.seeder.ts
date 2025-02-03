@@ -9,7 +9,7 @@ export const seedUsers = async (db: PrismaClient) => {
     return;
   }
 
-  const users: Prisma.UserUncheckedCreateInput[] = [];
+  const users: Prisma.UserCreateManyInput[] = [];
 
   const defaultRole = await db.systemRole.findFirstOrThrow({
     where: { name: SystemRoleType.USER },
@@ -22,38 +22,50 @@ export const seedUsers = async (db: PrismaClient) => {
   });
 
   for (let i = 0; i < 100; i++) {
-    const orgIdx = faker.number.int({ min: 0, max: organizations.length - 1 });
-    const org = organizations[orgIdx];
-    const orgRole = org?.organizationRoles[1];
     users.push({
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
       email: faker.internet.email(),
-      userSystemRoles: {
-        create: {
-          roleId: defaultRole.id,
-        },
-      },
-      ...(org
-        ? {
-            organizationUsers: {
-              create: {
-                organizationId: org.id,
-                ...(orgRole
-                  ? {
-                      organizationUserRoles: {
-                        create: {
-                          roleId: orgRole.id,
-                        },
-                      },
-                    }
-                  : {}),
-              },
-            },
-          }
-        : {}),
     });
   }
 
   await db.user.createMany({ data: users });
+
+  const seededUsers = await db.user.findMany({
+    select: { id: true },
+  });
+
+  for (const user of seededUsers) {
+    const orgIdx = faker.number.int({ min: 0, max: organizations.length - 1 });
+    const org = organizations[orgIdx];
+    const orgRole = org?.organizationRoles[1];
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        userSystemRoles: {
+          create: {
+            roleId: defaultRole.id,
+          },
+        },
+        ...(org
+          ? {
+              organizationUsers: {
+                create: {
+                  organizationId: org.id,
+                  ...(orgRole
+                    ? {
+                        organizationUserRoles: {
+                          create: {
+                            roleId: orgRole.id,
+                          },
+                        },
+                      }
+                    : {}),
+                },
+              },
+            }
+          : {}),
+      },
+    });
+  }
 };

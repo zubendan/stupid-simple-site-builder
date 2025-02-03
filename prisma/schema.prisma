@@ -264,7 +264,6 @@ model Template {
     name        String
     isPublic    Boolean @map("is_public")
     description String?
-    type        String
 
     createdByOrganizationId Int          @map("created_by_organization_id")
     createdByOrganization   Organization @relation(fields: [createdByOrganizationId], references: [id])
@@ -284,7 +283,7 @@ model Version {
     updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt DateTime? @map("deleted_at")
 
-    version     String @unique
+    version     String
     description String
 
     templateId      Int       @map("template_id")
@@ -294,6 +293,7 @@ model Version {
     parentVersion   Version?  @relation(name: "VersionToVersion", fields: [parentVersionId], references: [id], onDelete: SetNull, onUpdate: NoAction)
     versions        Version[] @relation(name: "VersionToVersion")
 
+    @@unique([templateId, version])
     @@index([createdAt])
     @@index([deletedAt])
     @@map("versions")

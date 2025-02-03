@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { Prisma, PrismaClient } from '@prisma/client';
+import { allOrgPermissions } from '~/types/permissions';
 
 export const seedOrganizations = async (db: PrismaClient) => {
   if (await db.organization.count()) {
@@ -10,19 +11,34 @@ export const seedOrganizations = async (db: PrismaClient) => {
     return;
   }
 
-  const organizations: Prisma.OrganizationUncheckedCreateInput[] = [];
+  const organizations: Prisma.OrganizationCreateManyInput[] = [];
 
   for (let i = 0; i < 100; i++) {
     organizations.push({
       name: `${faker.company.name()}`,
-      organizationRoles: {
-        create: {
-          name: 'Admin',
-          description: 'Role with all permissions',
-        },
-      },
     });
   }
 
   await db.organization.createMany({ data: organizations });
+
+  const seededOrganizations = await db.organization.findMany();
+  for (const org of seededOrganizations) {
+    await db.organizationRole.create({
+      data: {
+        organizationId: org.id,
+        name: 'Admin',
+        description: 'Role with all permissions',
+        rolePermissions: {
+          create: allOrgPermissions.map((p) => ({
+            organizationId: org.id,
+            permission: {
+              connect: {
+                name: p,
+              },
+            },
+          })),
+        },
+      },
+    });
+  }
 };

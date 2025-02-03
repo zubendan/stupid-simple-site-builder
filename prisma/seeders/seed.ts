@@ -4,6 +4,9 @@ import { db } from '~/server/db';
 import { seedOrganizations } from './organization.seeder';
 import { seedPermissions } from './permission.seeder';
 import { seedSystemRoles } from './systemRoles.seeder';
+import { seedUsers } from './user.seeder';
+import { seedTemplates } from './template.seeder';
+import { seedDomains } from './domain.seeder';
 
 faker.seed(2098);
 
@@ -17,6 +20,9 @@ async function seed() {
   await seedPermissions(db);
   await seedSystemRoles(db);
   await seedOrganizations(db);
+  await seedUsers(db);
+  await seedTemplates(db);
+  // await seedDomains(db);
 
   // switch(NODE_ENV) {
   //     case "test":

@@ -338,7 +338,6 @@ model Domain {
     organizationTemplate OrganizationTemplate? @relation(fields: [organizationId, templateId], references: [organizationId, templateId])
 
     @@unique([organizationId, domain])
-    @@unique([organizationId, templateId])
     @@index([domain])
     @@index([createdAt])
     @@index([deletedAt])

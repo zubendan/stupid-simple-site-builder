@@ -22,7 +22,7 @@ async function seed() {
   await seedOrganizations(db);
   await seedUsers(db);
   await seedTemplates(db);
-  // await seedDomains(db);
+  await seedDomains(db);
 
   // switch(NODE_ENV) {
   //     case "test":

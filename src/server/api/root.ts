@@ -1,5 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
-import { domainRouter } from './routers/domain';
+import { domainRouter } from './routers/organization/domain';
 import { organizationRouter } from './routers/organization';
 import { templateRouter } from './routers/template';
 import { userRouter } from './routers/user';

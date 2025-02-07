@@ -14,7 +14,7 @@ export const seedTemplates = async (db: PrismaClient) => {
   const tags: Prisma.TagCreateManyInput[] = [];
 
   for (let i = 0; i < 100; i++) {
-    const orgId = faker.number.int({ min: 1, max: 99 });
+    const orgId = i + 1;
     const templateName = `${faker.word.adverb()} ${faker.word.adjective()} ${faker.word.noun()}`;
     templates.push({
       createdByOrganizationId: orgId,
@@ -45,7 +45,7 @@ export const seedTemplates = async (db: PrismaClient) => {
       templateName: template.name,
     });
     for (let i = 0; i < 10; i++) {
-      const tagidx = faker.number.int({ min: 0, max: seeededTags.length - 1 });
+      const tagidx = i + 1;
       const tag = seeededTags[tagidx];
       if (!tag) continue;
       templateTags.push({
@@ -60,8 +60,8 @@ export const seedTemplates = async (db: PrismaClient) => {
     });
   }
 
-  db.organizationTemplate.createMany({ data: organizationTempaltes });
-  db.templateTag.createMany({ data: templateTags });
+  await db.organizationTemplate.createMany({ data: organizationTempaltes });
+  await db.templateTag.createMany({ data: templateTags });
   await db.version.createMany({ data: versions });
 
   const seededVersions = await db.version.findMany();

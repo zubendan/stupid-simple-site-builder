@@ -20,17 +20,7 @@ export class DomainService {
 
     return {
       AND: [
-        // ...(organizationId
-        //   ? [
-        //       {
-        //         organizationDomains: {
-        //           some: {
-        //             organizationId,
-        //           },
-        //         },
-        //       },
-        //     ]
-        //   : []),
+        ...(organizationId ? [{ organizationId }] : []),
         ...(deleted ? [{ NOT: { deletedAt: null } }] : [{ deletedAt: null }]),
         ...(searchTerms.length ? [{ OR: containedSearchTerms }] : []),
       ],

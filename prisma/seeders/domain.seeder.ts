@@ -10,13 +10,17 @@ export const seedDomains = async (db: PrismaClient) => {
 
   const domains: Prisma.DomainUncheckedCreateInput[] = [];
 
-  for (let i = 0; i < 100; i++) {
-    domains.push({
-      displayName: faker.internet.domainName(),
-      domain: faker.internet.domainName(),
-      organizationId: faker.number.int({ min: 1, max: 99 }),
-      templateId: faker.number.int({ min: 1, max: 99 }),
-    });
+  const templates = await db.organizationTemplate.findMany();
+
+  for (const template of templates) {
+    for (let i = 0; i < 50; i++) {
+      domains.push({
+        displayName: faker.internet.domainName(),
+        domain: faker.internet.domainName(),
+        organizationId: template.organizationId,
+        templateId: template.templateId,
+      });
+    }
   }
 
   await db.domain.createMany({ data: domains });

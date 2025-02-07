@@ -333,9 +333,9 @@ model Domain {
     displayName String @map("display_name")
     httpStatus  Int?   @map("http_status")
 
-    organizationId       Int                  @map("organization_id")
-    templateId           Int                  @map("template_id")
-    organizationTemplate OrganizationTemplate @relation(fields: [organizationId, templateId], references: [organizationId, templateId])
+    organizationId       Int                   @map("organization_id")
+    templateId           Int?                  @map("template_id")
+    organizationTemplate OrganizationTemplate? @relation(fields: [organizationId, templateId], references: [organizationId, templateId])
 
     @@unique([organizationId, domain])
     @@unique([organizationId, templateId])

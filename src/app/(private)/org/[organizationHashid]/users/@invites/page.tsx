@@ -18,7 +18,7 @@ export default function Page({
   const { organizationHashid } = use(params);
 
   const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    api.invite.infiniteList.useInfiniteQuery(
+    api.organization.invite.infiniteList.useInfiniteQuery(
       {
         limit: 5,
         organizationHashid,

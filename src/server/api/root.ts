@@ -1,9 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 import { domainRouter } from './routers/domain';
-import { inviteRouter } from './routers/invite';
 import { organizationRouter } from './routers/organization';
-import { organizationRoleRouter } from './routers/organizationRole';
-import { organizationUserRouter } from './routers/organizationUser';
 import { templateRouter } from './routers/template';
 import { userRouter } from './routers/user';
 
@@ -15,11 +12,8 @@ import { userRouter } from './routers/user';
 export const appRouter = createTRPCRouter({
   user: userRouter,
   organization: organizationRouter,
-  organizationRole: organizationRoleRouter,
-  organizationUser: organizationUserRouter,
   template: templateRouter,
   domain: domainRouter,
-  invite: inviteRouter,
 });
 
 // export type definition of API

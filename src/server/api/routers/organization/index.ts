@@ -17,10 +17,17 @@ import {
 } from '~/server/api/trpc';
 import { OrgPermission, allOrgPermissions } from '~/types/permissions';
 import { DefaultOrganizationUserRoleType } from '~/types/role';
+import { organizationUserRouter } from './user';
+import { organizationRoleRouter } from './role';
+import { inviteRouter } from './invite';
 
 const { BASE_URL } = env;
 
 export const organizationRouter = createTRPCRouter({
+  user: organizationUserRouter,
+  role: organizationRoleRouter,
+  invite: inviteRouter,
+
   list: protectedProcedure
     .input(
       z.object({

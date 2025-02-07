@@ -34,7 +34,7 @@ export const OrganizationRoleUpdateCreateForm = ({
   roleHashid,
   organizationHashid,
 }: IOrganizationRoleUpdateCreateFormProps) => {
-  const { data } = api.organizationRole.find.useQuery(
+  const { data } = api.organization.role.find.useQuery(
     { roleHashid: roleHashid ?? '' },
     {
       enabled: !!roleHashid,
@@ -63,9 +63,9 @@ export const OrganizationRoleUpdateCreateForm = ({
 
   const utils = api.useUtils();
   const { mutateAsync: createMutation } =
-    api.organizationRole.create.useMutation();
+    api.organization.role.create.useMutation();
   const { mutateAsync: updateMutation } =
-    api.organizationRole.update.useMutation();
+    api.organization.role.update.useMutation();
 
   const onSubmit: SubmitHandler<TFormInputs> = async (values) => {
     if (roleHashid) {

@@ -14,7 +14,7 @@ export async function GET(
   const { organizationHashid, token } = await params;
   const session = await auth();
 
-  const invite = await api.invite.find({
+  const invite = await api.organization.invite.find({
     token,
   });
 
@@ -35,7 +35,7 @@ export async function GET(
     userId: user.id,
   });
 
-  await api.invite.delete({
+  await api.organization.invite.delete({
     token,
   });
 

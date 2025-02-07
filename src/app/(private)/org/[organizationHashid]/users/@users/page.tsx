@@ -24,7 +24,7 @@ export default function Page({
   const [{ search }] = useQueryStates(searchParams);
   const { organizationHashid } = use(params);
   const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    api.organizationUser.infiniteList.useInfiniteQuery(
+    api.organization.user.infiniteList.useInfiniteQuery(
       {
         limit: 5,
         organizationHashid,

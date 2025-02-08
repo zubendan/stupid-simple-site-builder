@@ -1,3 +1,4 @@
+import { Anchor, Button } from '@mantine/core';
 import Link from 'next/link';
 
 import { auth } from '~/server/auth';
@@ -9,48 +10,58 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className='flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white'>
-        <div className='container flex flex-col items-center justify-center gap-12 px-4 py-16'>
-          <h1 className='text-5xl font-extrabold tracking-tight sm:text-[5rem]'>
-            Create <span className='text-[hsl(280,100%,70%)]'>T3</span> App
+      <header className='grid grid-cols-[auto_1fr] grid-rows-1 px-2 sm:px-4 py-2 gap-4'>
+        <Link
+          href={routes.HOME}
+          className='font-bold text-2xl bg-clip-text [-webkit-text-fill-color:transparent] bg-gradient-to-tr from-skyfall-300 to-skyfall-900'
+        >
+          VERSA
+        </Link>
+        <div className='flex items-center gap-4 w-full justify-end'>
+          <Anchor
+            component={Link}
+            href={routes.ABOUT}
+            className='font-medium text-black hover:text-skyfall-500 !no-underline'
+          >
+            About
+          </Anchor>
+          <Anchor
+            component={Link}
+            href={routes.PRICING}
+            className='font-medium text-black hover:text-skyfall-500 !no-underline'
+          >
+            Pricing
+          </Anchor>
+          {session ? (
+            <Button component={Link} size='sm' href={routes.ORGANIZATIONS}>
+              Build
+            </Button>
+          ) : (
+            <Button component={Link} size='sm' href={routes.SIGN_IN}>
+              Sign in
+            </Button>
+          )}
+        </div>
+      </header>
+      <main className='relative min-h-screen'>
+        <div className='bg-skyfall-500 px-10 text-center py-16 text-neutral-50'>
+          <h1 className='text-4xl font-bold pb-6'>
+            Build your website with <strong>VERSA</strong>
           </h1>
-          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8'>
-            <Link
-              className='flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20'
-              href='https://create.t3.gg/en/usage/first-steps'
-              target='_blank'
-            >
-              <h3 className='text-2xl font-bold'>First Steps →</h3>
-              <div className='text-lg'>
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className='flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20'
-              href='https://create.t3.gg/en/introduction'
-              target='_blank'
-            >
-              <h3 className='text-2xl font-bold'>Documentation →</h3>
-              <div className='text-lg'>
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className='flex flex-col items-center gap-2'>
-            <div className='flex flex-col items-center justify-center gap-4'>
-              <p className='text-center text-2xl text-white'>
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? routes.SIGN_OUT : routes.SIGN_IN}
-                className='rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20'
-              >
-                {session ? 'Sign out' : 'Sign in'}
-              </Link>
-            </div>
-          </div>
+          <p className='pb-6 text-lg'>
+            Experience <strong>Versaility</strong>, <strong>Efficiency</strong>,
+            and <strong>Reliability</strong>
+            <br /> all in one <strong>Sitebuilder</strong> with the best{' '}
+            <strong>Accessibility</strong>
+          </p>
+          <Button
+            component={Link}
+            href={routes.SIGN_IN}
+            variant='white'
+            className='hover:-translate-y-1 transition-transform'
+          >
+            Get Started
+          </Button>
         </div>
       </main>
     </HydrateClient>

@@ -3,6 +3,7 @@ export const routes = {
   SIGN_OUT: '/sign-out',
   SIGN_IN: '/sign-in',
   ABOUT: '/about',
+  PRICING: '/pricing',
   DO_NOT_SELL: '/about/do-not-sell',
   PRIVACY: '/about/privacy',
   TERMS_OF_USE: '/about/terms-of-use',

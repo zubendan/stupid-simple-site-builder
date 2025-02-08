@@ -1,30 +1,22 @@
-import { Group } from '@mantine/core';
-import { api } from '~/trpc/server';
+'use client';
+import { Group, TextInput } from '@mantine/core';
+import { use } from 'react';
+import { DomainInfiniteList } from '~/app/(private)/_components/organizations/domains/DomainInfiniteList';
 
-export default async function Page({
+export default function Page({
   params,
 }: { params: Promise<{ organizationHashid: string }> }) {
-  const { organizationHashid } = await params;
-  const { domains } = await api.domain.infiniteList({
-    limit: 25,
-    organizationHashid,
-    search: '',
-  });
+  const { organizationHashid } = use(params);
 
   return (
-    <div className='grid grid-rows-[100px_1fr] grid-cols-1'>
-      <Group className='bg-blue-500 items-end'>
-        <h1>Domains</h1>
+    <div className='grid grid-rows-[100px_1fr] grid-cols-1 gap-4'>
+      <Group className='items-end'>
+        <TextInput label='Search' placeholder='Search' />
       </Group>
-      <div className='bg-red-500'>
-        {domains.map((domain) => (
-          <div
-            key={domain.hashid}
-            className='text-black p-5 bg-neutral-200 rounded-md'
-          >
-            {domain.domain}
-          </div>
-        ))}
+      <div className=''>
+        {/* <HydrateClient> */}
+        <DomainInfiniteList organizationHashid={organizationHashid} />
+        {/* </HydrateClient> */}
       </div>
     </div>
   );

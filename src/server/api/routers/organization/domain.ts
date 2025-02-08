@@ -6,9 +6,13 @@ import {
   organizationProcedure,
   protectedProcedure,
 } from '~/server/api/trpc';
+import { OrgPermission } from '~/types/permissions';
 
 export const domainRouter = createTRPCRouter({
   infiniteList: organizationProcedure
+    .meta({
+      permissions: [OrgPermission.VIEW_DOMAINS],
+    })
     .input(
       z.object({
         limit: z.number(),

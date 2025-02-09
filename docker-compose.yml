@@ -1,23 +1,33 @@
 version: "3.9"
 services:
-#  app:
-#    platform: "linux/amd64"
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    working_dir: /app
-#    ports:
-#      - "3000:3000"
-#    image: t3-app
-#    env_file:
-#      - .env
+  redis:
+    image: bitnami/redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: secret
+  redis-rl:
+    image: bitnami/redis
+    ports:
+      - "6380:6379"
+    environment:
+      REDIS_PASSWORD: secret
+  redis-commander:
+    image: rediscommander/redis-commander
+    ports:
+      - "6381:6381"
+    environment:
+      PORT: 6381
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
+      REDIS_PASSWORD: secret
   postgres:
     image: "postgres"
     environment:
-    - POSTGRES_USER=admin
-    - POSTGRES_PASSWORD=secret
-    - POSTGRES_DB=sssb
-    - TZ=UTC
-    - PGTZ=UTC
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=sssb
+      - TZ=UTC
+      - PGTZ=UTC
     ports:
-    - "5432:5432"
+      - "5432:5432"

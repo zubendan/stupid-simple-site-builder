@@ -1,11 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
-import {
-  createTRPCRouter,
-  organizationProcedure,
-  protectedProcedure,
-} from '~/server/api/trpc';
+import { createTRPCRouter, organizationProcedure } from '~/server/api/trpc';
 import { OrgPermission } from '~/types/permissions';
 
 export const domainRouter = createTRPCRouter({
@@ -44,7 +40,7 @@ export const domainRouter = createTRPCRouter({
             }
           : undefined,
         orderBy: {
-          createdAt: 'desc',
+          id: 'asc',
         },
       });
       let nextCursor: typeof input.cursor | undefined = undefined;
@@ -60,12 +56,69 @@ export const domainRouter = createTRPCRouter({
       };
     }),
 
-  find: protectedProcedure
+  find: organizationProcedure
+    .meta({
+      permissions: [OrgPermission.VIEW_DOMAINS],
+    })
     .input(z.object({ hashid: z.string() }))
     .query(async ({ ctx, input }) => {
       const id = ctx.hashidService.decode(input.hashid);
       return ctx.db.domain.findUnique({
         where: { id },
       });
+    }),
+
+  add: organizationProcedure
+    .meta({
+      permissions: [OrgPermission.ADD_DOMAINS],
+    })
+    .input(
+      z.object({
+        name: z.string(),
+        domain: z.string(),
+        organizationHashid: z.string(),
+        templateHashid: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const templateId = ctx.hashidService.decode(input.templateHashid);
+      const organizationId = ctx.hashidService.decode(input.organizationHashid);
+      return ctx.db.domain.create({
+        data: {
+          displayName: input.name,
+          domain: input.domain,
+          templateId,
+          organizationId,
+        },
+      });
+    }),
+
+  update: organizationProcedure
+    .meta({
+      permissions: [OrgPermission.EDIT_DOMAINS],
+    })
+    .input(
+      z.object({
+        hashid: z.string(),
+        name: z.string(),
+        domain: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const id = ctx.hashidService.decode(input.hashid);
+      return ctx.db.domain.update({
+        where: { id },
+        data: { displayName: input.name, domain: input.domain },
+      });
+    }),
+
+  delete: organizationProcedure
+    .meta({
+      permissions: [OrgPermission.DELETE_DOMAINS],
+    })
+    .input(z.object({ hashid: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const id = ctx.hashidService.decode(input.hashid);
+      return ctx.db.domain.delete({ where: { id } });
     }),
 });

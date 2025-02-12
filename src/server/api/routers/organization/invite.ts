@@ -64,6 +64,9 @@ export const inviteRouter = createTRPCRouter({
         take: input.limit + 1,
         where: whereClause,
         cursor: input.cursor ? { token: input.cursor } : undefined,
+        orderBy: {
+          token: 'asc',
+        },
       });
 
       let nextCursor: typeof input.cursor | undefined = undefined;

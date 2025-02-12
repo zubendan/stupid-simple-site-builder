@@ -151,7 +151,7 @@ export const organizationUserRouter = createTRPCRouter({
           },
         },
         orderBy: {
-          joinedAt: 'desc',
+          userId: 'asc',
         },
       });
       let nextCursor: typeof input.cursor | undefined = undefined;

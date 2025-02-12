@@ -15,13 +15,13 @@ export const env = createEnv({
         'You forgot to change the default URL',
       ),
     REDIS_HOST: z.string(),
-    REDIS_PORT: z.number(),
+    REDIS_PORT: z.coerce.number(),
     REDIS_PASSWORD: z.string(),
-    REDIS_SSL: z.boolean(),
+    REDIS_SSL: z.coerce.boolean(),
     REDIS_RL_HOST: z.string(),
-    REDIS_RL_PORT: z.number(),
+    REDIS_RL_PORT: z.coerce.number(),
     REDIS_RL_PASSWORD: z.string(),
-    REDIS_RL_SSL: z.boolean(),
+    REDIS_RL_SSL: z.coerce.boolean(),
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),

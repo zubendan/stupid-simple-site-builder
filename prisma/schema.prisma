@@ -234,6 +234,7 @@ model Organization {
     customComponents      CustomComponent[]
     inviteTokens          Invite[]
     organizationRoles     OrganizationRole[]
+    domains               Domain[]
 
     @@index([createdAt])
     @@map("organizations")
@@ -245,7 +246,7 @@ model OrganizationTemplate {
 
     organization Organization @relation(fields: [organizationId], references: [id])
     template     Template     @relation(fields: [templateId], references: [id])
-    templateName String       @map("template_name") // 
+    templateName String       @map("template_name")
     domains      Domain[]
 
     @@id([organizationId, templateId])
@@ -330,12 +331,14 @@ model Domain {
     deletedAt DateTime? @map("deleted_at")
 
     domain      String
-    displayName String @map("display_name")
-    httpStatus  Int?   @map("http_status")
+    displayName String  @map("display_name")
+    httpStatus  Int?    @map("http_status")
+    isVerified  Boolean @default(false) @map("is_verified")
 
     organizationId       Int                   @map("organization_id")
     templateId           Int?                  @map("template_id")
     organizationTemplate OrganizationTemplate? @relation(fields: [organizationId, templateId], references: [organizationId, templateId])
+    organization         Organization          @relation(fields: [organizationId], references: [id])
 
     @@unique([organizationId, domain])
     @@index([domain])

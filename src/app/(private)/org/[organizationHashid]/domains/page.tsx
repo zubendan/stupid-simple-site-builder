@@ -9,14 +9,13 @@ export default function Page({
   const { organizationHashid } = use(params);
 
   return (
-    <div className='grid grid-rows-[100px_1fr] grid-cols-1 gap-4'>
+    <div className='grid grid-rows-[100px_1fr] grid-cols-1 gap-4 h-[calc(100vh-16px)]'>
       <Group className='items-end'>
         <TextInput label='Search' placeholder='Search' />
       </Group>
-      <div className=''>
-        {/* <HydrateClient> */}
+      <div className='h-full overflow-auto'>
+        {/* <div>yo</div> */}
         <DomainInfiniteList organizationHashid={organizationHashid} />
-        {/* </HydrateClient> */}
       </div>
     </div>
   );

@@ -62,10 +62,10 @@ function NavLink({
         href={href}
         onClick={onClick}
         className={cn(
-          'flex w-full text-sm font-bold transition-colors duration-200 hover:bg-neutral-200',
+          'flex text-sm font-bold transition-colors duration-200 hover:bg-neutral-200',
           {
-            'rounded-md p-3': isCollapsed,
-            'rounded-l-md px-4 py-3': !isCollapsed,
+            'rounded-md p-2 my-2': isCollapsed,
+            'rounded-l-md px-4 py-2 my-2': !isCollapsed,
             'bg-[--mantine-primary-color-7] bg-gradient-to-r from-[--mantine-primary-color-7] to-[--mantine-primary-color-9] text-white':
               active,
             'text-neutral-500 hover:text-black': !active,
@@ -73,7 +73,7 @@ function NavLink({
         )}
       >
         <Group className='flex-nowrap whitespace-nowrap'>
-          <Icon icon={icon} className='text-xl' />
+          <Icon icon={icon} className='text-xl size-5' />
           {!isCollapsed && <span>{label}</span>}
         </Group>
       </UnstyledButton>
@@ -183,7 +183,7 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
               </div>
             </div>
             <div
-              className={`w-full overflow-y-auto ${isCollapsed ? 'px-2' : 'pl-2'}`}
+              className={`w-full overflow-y-auto ${isCollapsed ? 'px-3' : 'pl-2'}`}
             >
               {linkData.map((link, index) => {
                 return (
@@ -202,7 +202,7 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
           </div>
           <Divider className='my-2 border-neutral-500' />
           {user && (
-            <div className={`mb-2 grid w-full ${isCollapsed ? 'p-2' : 'px-2'}`}>
+            <div className={`mb-2 grid w-full px-2`}>
               <Menu
                 width={260}
                 position='top-start'
@@ -218,23 +218,23 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
                     className={cn(
                       'grid w-full items-center gap-3 font-bold transition-colors duration-200 hover:bg-neutral-200 rounded-md',
                       {
-                        'grid-cols-[auto_1fr] px-5 py-3': !isCollapsed,
+                        'grid-cols-[auto_1fr] px-5 py-2': !isCollapsed,
                         'grid-cols-1 justify-items-center p-2': isCollapsed,
                       },
                     )}
                   >
                     {org?.image ? (
                       <Image
-                        className='rounded-lg size-7 text-xs bg-neutral-500 text-transparent'
+                        className='rounded-lg size-6 text-xs bg-neutral-500 text-transparent'
                         src={org?.image}
                         alt='Profile Pic'
                         width={28}
                         height={28}
                       />
                     ) : (
-                      <Avatar>
-                        <Icon icon='tabler:box' className='size-5 text-xl' />
-                      </Avatar>
+                      <div className='flex items-center justify-center bg-neutral-300 size-7 rounded-full'>
+                        <Icon icon='tabler:box' className='text-xl' />
+                      </div>
                     )}
                     {!isCollapsed && (
                       <div className='flex w-full items-center justify-between gap-1 pr-2'>
@@ -266,7 +266,7 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
                     className={cn(
                       'grid w-full items-center gap-3 font-bold transition-colors duration-200 hover:bg-neutral-200 rounded-md',
                       {
-                        'grid-cols-[auto_1fr] px-5 py-3': !isCollapsed,
+                        'grid-cols-[auto_1fr] px-5 py-2': !isCollapsed,
                         'grid-cols-1 justify-items-center p-2': isCollapsed,
                       },
                     )}
@@ -326,18 +326,20 @@ export const SideNav = ({ organizationHashid }: ISideBarNavProps) => {
                     className={cn(
                       'flex w-full items-center rounded-md text-sm font-bold transition-colors duration-200 hover:bg-neutral-200',
                       {
-                        'p-3': isCollapsed,
-                        'px-6 py-3': !isCollapsed,
+                        'p-2 justify-center': isCollapsed,
+                        'px-5 py-2': !isCollapsed,
                       },
                     )}
                   >
                     <Group className='flex-nowrap whitespace-nowrap'>
-                      <Icon
-                        icon='tabler:chevron-left'
-                        className={cn('text-xl', {
-                          'rotate-180': isCollapsed,
-                        })}
-                      />
+                      <div className='flex items-center justify-center size-7'>
+                        <Icon
+                          icon='tabler:chevron-left'
+                          className={cn('text-xl', {
+                            'rotate-180': isCollapsed,
+                          })}
+                        />
+                      </div>
                       {!isCollapsed && <span>Collapse</span>}
                     </Group>
                   </UnstyledButton>

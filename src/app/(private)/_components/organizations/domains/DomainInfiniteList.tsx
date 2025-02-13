@@ -33,7 +33,10 @@ export const DomainInfiniteList = ({
       isLoading={isLoading}
       data={domains?.map((domain) => {
         return (
-          <Group key={domain.hashid} className='flex-nowrap bg-neutral-200 p-3'>
+          <Group
+            key={domain.hashid}
+            className='flex-nowrap border-solid border-b-2 border-neutral-200 p-2'
+          >
             {/* <ListActionsButton>
           <ActionMenuItem
             onClick={() => openEditModal(user.hashid)}

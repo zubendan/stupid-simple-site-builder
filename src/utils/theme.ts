@@ -15,7 +15,14 @@ const skyfall: MantineColorsTuple = [
 
 const sharedInputProps = {
   defaultProps: {
-    size: 'md',
+    size: 'sm',
+  },
+};
+
+const sharedSelectProps = {
+  defaultProps: {
+    size: 'sm',
+    withCheckIcon: false,
   },
 };
 
@@ -43,10 +50,7 @@ export const mantineTheme: MantineThemeOverride = {
       ...sharedInputProps,
     },
     NativeSelect: {
-      defaultProps: {
-        ...sharedInputProps.defaultProps,
-        withCheckIcon: false,
-      },
+      ...sharedSelectProps,
     },
     NumberInput: {
       ...sharedInputProps,
@@ -61,19 +65,13 @@ export const mantineTheme: MantineThemeOverride = {
       ...sharedInputProps,
     },
     MultiSelect: {
-      defaultProps: {
-        ...sharedInputProps.defaultProps,
-        withCheckIcon: false,
-      },
+      ...sharedSelectProps,
     },
     PillsInput: {
       ...sharedInputProps,
     },
     Select: {
-      defaultProps: {
-        ...sharedInputProps.defaultProps,
-        withCheckIcon: false,
-      },
+      ...sharedSelectProps,
     },
     TagsInput: {
       ...sharedInputProps,

@@ -26,7 +26,7 @@ export type TFormInputs = z.infer<typeof schema>;
 export interface IOrganizationRoleUpdateCreateFormProps {
   organizationHashid: string;
   roleHashid?: string;
-  onSuccess?: (org: RouterOutputs['organizationRole']['create']) => void;
+  onSuccess?: (org: RouterOutputs['organization']['role']['create']) => void;
 }
 
 export const OrganizationRoleUpdateCreateForm = ({
@@ -76,7 +76,7 @@ export const OrganizationRoleUpdateCreateForm = ({
       if (data) {
         modals.closeAll();
         form.reset();
-        await utils.organizationRole.list.invalidate();
+        await utils.organization.role.list.invalidate();
         if (typeof onSuccess === 'function') {
           onSuccess(data);
         }
@@ -86,7 +86,7 @@ export const OrganizationRoleUpdateCreateForm = ({
       if (data) {
         modals.closeAll();
         form.reset();
-        await utils.organizationRole.list.invalidate();
+        await utils.organization.role.list.invalidate();
         if (typeof onSuccess === 'function') {
           onSuccess(data);
         }
@@ -128,7 +128,7 @@ export const OrganizationRoleUpdateCreateForm = ({
           </SimpleGrid>
         </CheckboxGroup>
         <Group className='justify-end pt-4'>
-          <Button type='submit' disabled={!form.formState.isDirty}>
+          <Button size='sm' type='submit' disabled={!form.formState.isDirty}>
             {roleHashid ? 'Update' : 'Create'}
           </Button>
         </Group>

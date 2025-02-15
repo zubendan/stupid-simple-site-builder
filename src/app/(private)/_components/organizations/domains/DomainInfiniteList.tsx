@@ -1,8 +1,12 @@
-import { api } from '~/trpc/react';
-import { InfiniteList } from '../../InfiniteList';
-import { Center, Group, Loader, Stack } from '@mantine/core';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import { Center, Group, Loader, Stack } from '@mantine/core';
+import Link from 'next/link';
 import { useInView } from 'react-intersection-observer';
+import { api } from '~/trpc/react';
+import { routes } from '~/utils/routes';
+import { InfiniteList } from '../../InfiniteList';
+import { ListActionsButton } from '../../ListActions';
+import { DeleteDomainButton } from './DeleteButton';
 
 export const DomainInfiniteList = ({
   organizationHashid,
@@ -35,16 +39,11 @@ export const DomainInfiniteList = ({
         return (
           <Group
             key={domain.hashid}
-            className='flex-nowrap border-solid border-b-2 border-neutral-200 p-2'
+            className='flex-nowrap border-solid border-b-2 border-neutral-200 p-2 gap-x-2'
           >
-            {/* <ListActionsButton>
-          <ActionMenuItem
-            onClick={() => openEditModal(user.hashid)}
-            icon={IconPencil}
-            text="Edit"
-          />
-          <DeleteUserButton hashid={user.hashid} revalidate={refetch} />
-        </ListActionsButton> */}
+            <ListActionsButton>
+              <DeleteDomainButton hashid={domain.hashid} />
+            </ListActionsButton>
             <Icon
               icon='tabler:world'
               className={`size-8 rounded-md text-white p-1 ${
@@ -52,9 +51,12 @@ export const DomainInfiniteList = ({
               }`}
             />
             <Stack className='gap-y-1'>
-              <p className='font-semibold border-b border-dashed border-b-neutral-600'>
+              <Link
+                className='font-semibold border-b border-dashed border-b-neutral-600 cursor-pointer'
+                href={routes.DOMAIN(organizationHashid, domain.hashid)}
+              >
                 {domain.domain}
-              </p>
+              </Link>
               <p className='text-xs font-medium text-neutral-700'>
                 {domain.isVerified ? 'Verified' : 'Unverified'}
               </p>

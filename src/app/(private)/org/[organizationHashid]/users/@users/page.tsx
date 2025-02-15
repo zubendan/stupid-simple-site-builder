@@ -46,7 +46,7 @@ export default function Page({
   return (
     <section className='grid grid-cols-[33%_1fr]'>
       <div>
-        <h4 className='font-bold py-3'>Users</h4>
+        <h4 className='text-xl font-bold py-3'>Users</h4>
         <p className='text-sm text-neutral-700 pb-4'>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto et
           architecto minima ipsam consequatur enim sed veniam odit maxime

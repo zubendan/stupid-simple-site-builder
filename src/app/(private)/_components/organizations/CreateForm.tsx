@@ -96,7 +96,7 @@ export const OrganizationUpdateCreateForm = ({
           />
         </SimpleGrid>
         <Group className='justify-end pt-4'>
-          <Button type='submit' disabled={!form.formState.isDirty}>
+          <Button size='sm' type='submit' disabled={!form.formState.isDirty}>
             Create
           </Button>
         </Group>

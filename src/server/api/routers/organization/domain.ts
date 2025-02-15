@@ -74,18 +74,18 @@ export const domainRouter = createTRPCRouter({
     })
     .input(
       z.object({
-        name: z.string(),
         domain: z.string(),
         organizationHashid: z.string(),
-        templateHashid: z.string(),
+        templateHashid: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const templateId = ctx.hashidService.decode(input.templateHashid);
+      const templateId = input.templateHashid
+        ? ctx.hashidService.decode(input.templateHashid)
+        : null;
       const organizationId = ctx.hashidService.decode(input.organizationHashid);
       return ctx.db.domain.create({
         data: {
-          displayName: input.name,
           domain: input.domain,
           templateId,
           organizationId,

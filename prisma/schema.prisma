@@ -330,10 +330,9 @@ model Domain {
     updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
     deletedAt DateTime? @map("deleted_at")
 
-    domain      String
-    displayName String  @map("display_name")
-    httpStatus  Int?    @map("http_status")
-    isVerified  Boolean @default(false) @map("is_verified")
+    domain     String
+    httpStatus Int?    @map("http_status")
+    isVerified Boolean @default(false) @map("is_verified")
 
     organizationId       Int                   @map("organization_id")
     templateId           Int?                  @map("template_id")

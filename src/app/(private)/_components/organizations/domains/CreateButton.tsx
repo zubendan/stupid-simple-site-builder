@@ -4,26 +4,25 @@ import { Button } from '@mantine/core';
 import { modals } from '@mantine/modals';
 
 import {
-  IOrganizationRoleUpdateCreateFormProps,
-  OrganizationRoleUpdateCreateForm,
-} from '~/app/(private)/_components/organizations/roles/CreateForm';
+  IDomainCreateFormProps,
+  DomainCreateForm,
+} from '~/app/(private)/_components/organizations/domains/CreateForm';
 
-interface ICreateOrganizationRoleButtonProps {
+interface ICreateDomainButtonProps {
   label?: string;
   RightIcon?: React.ReactNode;
 }
 
-export const CreateOrganizationRoleButton = ({
-  label = 'Create Role',
+export const CreateDomainButton = ({
+  label = 'Add Domain',
   RightIcon = <Icon icon='tabler:plus' className='text-lg' />,
   ...formProps
-}: ICreateOrganizationRoleButtonProps &
-  IOrganizationRoleUpdateCreateFormProps) => {
+}: ICreateDomainButtonProps & IDomainCreateFormProps) => {
   const openModal = () =>
     modals.open({
-      title: 'Create Role',
+      title: 'Create Domain',
       size: 'lg',
-      children: <OrganizationRoleUpdateCreateForm {...formProps} />,
+      children: <DomainCreateForm {...formProps} />,
     });
 
   return (

@@ -15,8 +15,8 @@ export const InviteButton = (props: IInviteFormProps) => {
   return (
     <Button
       onClick={openModal}
-      size='md'
-      rightSection={<Icon icon='tabler:mail' className='text-xl' />}
+      size='sm'
+      rightSection={<Icon icon='tabler:mail' className='text-lg' />}
     >
       Invite
     </Button>
